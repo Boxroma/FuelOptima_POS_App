@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/materialCardView"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/teal_200"
+    android:layout_marginBottom="6dp"
+    android:layout_margin="4dp"
+    android:elevation="3dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    app:cardCornerRadius="6dp"
+    android:focusable="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_product_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Product Name"
+            android:textAlignment="textStart"
+            android:textSize="@dimen/small_text"
+            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="unit_price"
+            android:textAlignment="textStart"
+            android:textSize="@dimen/small_text"
+            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="quantity"
+            android:textAlignment="textStart"
+            android:textFontWeight="700"
+            android:textSize="@dimen/small_text"
+            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="total"
+            android:textAlignment="textStart"
+            android:textFontWeight="700"
+            android:textSize="@dimen/small_text"
+            android:textColor="@android:color/secondary_text_light" />
+
+        <ImageButton
+            android:id="@+id/bt_remove"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_weight="0.2"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_cancel"
+            android:contentDescription="TODO" />
+
+
+    </LinearLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

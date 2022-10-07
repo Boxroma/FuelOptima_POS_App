@@ -4,57 +4,53 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/materialCardView"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/teal_200"
+    app:cardBackgroundColor="@color/teal_200"
     android:layout_marginBottom="6dp"
-    app:strokeColor="@color/black"
-    app:strokeWidth="3dp"
-    app:cardCornerRadius="6dp">
+    android:layout_margin="4dp"
+    android:elevation="3dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    app:cardCornerRadius="6dp"
+    android:focusable="true">
+
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_product_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_weight="7">
+            android:text="Product Name"
+            android:textAlignment="textStart"
+            android:textSize="18sp"
+            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textAlignment="textStart"
+            android:textSize="12sp"
+            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:text="ZMK 0.00"
+            android:textAlignment="textStart"
+            android:textFontWeight="700"
+            android:textSize="12sp"
+            android:textColor="@android:color/secondary_text_light" />
 
-            <ImageView
-                android:id="@+id/iv_client_icon"
-                android:layout_marginStart="24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_launcher_foreground"
-                />
-
-
-            <TextView
-                android:id="@+id/tv_product_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:text="Full Name"
-                android:textAlignment="textStart"
-                android:textSize="24sp"
-                android:textColor="@color/text_main" />
-            <TextView
-                android:id="@+id/tv_description"
-                android:layout_width="100sp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:text="Client ID"
-                android:textAlignment="textStart"
-                android:textSize="24sp"
-                android:textColor="@color/text_main" />
-
-
-        </LinearLayout>
 
     </LinearLayout>
+
 
 </com.google.android.material.card.MaterialCardView>

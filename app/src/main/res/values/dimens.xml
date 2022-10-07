@@ -2,4 +2,5 @@
 <resources>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="client_item_text_size">24sp</dimen>
+    <dimen name="small_text">12sp</dimen>
 </resources>

@@ -1,7 +1,7 @@
 package io.grindallday.endrone_mobile_app.layouts.LoginLayout;
 
-import static android.content.ContentValues.TAG;
-
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,27 +12,35 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
+import java.util.Date;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentLoginBinding;
+import io.grindallday.endrone_mobile_app.model.User;
+import io.grindallday.endrone_mobile_app.repository.FireStoreRepository;
 
 public class LoginFragment extends Fragment {
 
     private FragmentLoginBinding binding;
     private FirebaseAuth mAuth;
+    private SharedPreferences sharedPref;
+    private FirebaseUser firebaseUser;
+    private FirebaseFirestore firebaseFirestore;
+    private final String TAG = "LoginFragment";
+    private User currentUser = new User();
+    SharedPreferences.Editor editor;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -51,6 +59,11 @@ public class LoginFragment extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        //initialize shared preference
+        sharedPref = requireActivity().getSharedPreferences("pref",Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+
     }
 
     @Override
@@ -144,8 +157,14 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.homeFragment);
+
+                            //Set user id for future use
+                            firebaseUser = mAuth.getCurrentUser();
+                            if (firebaseUser != null){
+                                Log.d(TAG, " User Id has been set: " + firebaseUser.getUid());
+                                getUser(firebaseUser.getUid());
+                            }
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -164,9 +183,68 @@ public class LoginFragment extends Fragment {
 
     public void showProgressBar() {
         binding.progressBar.setVisibility(View.VISIBLE);
+        binding.etPass.setEnabled(false);
+        binding.etEmail.setEnabled(false);
     }
 
     public void hideProgressBar() {
         binding.progressBar.setVisibility(View.INVISIBLE);
+        binding.etPass.setEnabled(true);
+        binding.etEmail.setEnabled(true);
     }
+
+    public void setUserVariables(User user){
+        Date date = new Date(System.currentTimeMillis());
+
+        Log.d(TAG, String.format("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s",user.getUid(),user.getStationId()));
+        //Set Preference
+        editor.putString("clientId",user.getUid());
+        editor.putString("stationId",user.getStationId());
+        editor.putLong("loginMills",date.getTime());
+        editor.apply();
+
+        //Toast.makeText(getContext(),"Successfull", Toast.LENGTH_SHORT).show();
+        NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.homeFragment);
+
+
+    }
+    public void getUser(String userId){
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(userId);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                User user = new User();
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()){
+                        Log.d(TAG, "DocumentSnapshot data: " + documentSnapshot.getData());
+                        user = new User(
+                                documentSnapshot.getString("uid"),
+                                documentSnapshot.getString("firstName"),
+                                documentSnapshot.getString("secondName"),
+                                documentSnapshot.getString("email"),
+                                documentSnapshot.getString("date"),
+                                documentSnapshot.getString("nrc"),
+                                documentSnapshot.getString("stationId"),
+                                documentSnapshot.getString("stationName"),
+                                documentSnapshot.getString("stationAddress"),
+                                documentSnapshot.getString("role"));
+
+                        setUserVariables(user);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+
+                    currentUser = user;
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+
+            }
+        });
+    }
+
+
 }

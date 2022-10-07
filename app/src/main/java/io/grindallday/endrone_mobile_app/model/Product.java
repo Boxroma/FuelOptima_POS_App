@@ -2,20 +2,24 @@ package io.grindallday.endrone_mobile_app.model;
 
 public class Product {
 
+    private String product_id;
     private String name;
     private String description;
-    private int price;
+    private double price;
     private String type;
     private String station_id;
-    private int quantity;
+    private String pump_no;
+    private double quantity;
 
-    public Product (String name, String description, int price , String type, String station_id, int quantity){
+    public Product (String product_id, String name, String description, double price , String type, String station_id,String pump_no, double quantity){
+        this.product_id = product_id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.type = type;
         this.station_id = station_id;
-        this.quantity = quantity;
+        this.pump_no = pump_no;
+        this.quantity = quantity; //Depending on the context its been used.
     }
 
     public Product(String name) {
@@ -23,8 +27,9 @@ public class Product {
     }
 
     public Product() {
-        this.name = "";
+
     }
+
 
     public String getName() {
         return name;
@@ -42,7 +47,7 @@ public class Product {
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -66,12 +71,28 @@ public class Product {
         this.station_id = station_id;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
+    }
+
+    public String getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
+    }
+
+    public String getPump_no() {
+        return pump_no;
+    }
+
+    public void setPump_no(String pump_no) {
+        this.pump_no = pump_no;
     }
 
 }
