@@ -1,4 +1,4 @@
-package io.grindallday.endrone_mobile_app.layouts.TransactionsLayout.Adapters;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,34 +18,42 @@ import java.util.List;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.R;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.HomeFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.HomeFragment;
 import io.grindallday.endrone_mobile_app.model.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
+    private Context context;
     private List<Product> productList;
+    private HomeFragment homeFragment;
 
-    public ProductAdapter() {
+    public ProductAdapter(Context context, HomeFragment homeFragment) {
+        this.context = context;
         this.productList = new ArrayList<>();
+        this.homeFragment = homeFragment;
         Log.d("ProductAdapter", "Adapter called");
     }
 
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ProductViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.trans_product_list_item, parent, false));
+        return new ProductViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.product_list_item, parent, false));
     }
 
-    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.tvName.setText(product.getName());
-        holder.tvPrice.setText(String.format("ZMW %,.2f", product.getPrice()));
-        holder.tvPump.setText(product.getPump_no());
-        holder.tvQuantity.setText(String.format("%,.2f", product.getQuantity()));
-        holder.tvTotal.setText(String.format("ZMW %,.2f", (product.getPrice()*product.getQuantity())));
+        holder.name.setText(product.getName());
+        holder.description.setText(product.getDescription());
+        holder.price.setText(String.format("ZMK %,.2f", product.getPrice()));
 
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
+                homeFragment.showProductSaleDialog(product);
+            }
+        });
     }
 
     @Override
@@ -64,8 +72,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productList.clear();
         }
 
-        productList = newProductList;
-
+        for(Product product : newProductList){
+            if(Objects.equals(product.getType(), "product")){
+                productList.add(product);
+            }
+        }
         //productList.addAll(newProductList);
         notifyDataSetChanged();
         Log.d("ProductAdapter", "Values Updated");
@@ -74,18 +85,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView tvName, tvPrice, tvPump, tvQuantity, tvTotal;
+        public TextView name, description, price;
         public CardView cardView;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
 
             cardView = itemView.findViewById(R.id.materialCardView);
-            tvName = itemView.findViewById(R.id.tv_product_name);
-            tvPrice = itemView.findViewById(R.id.tv_price);
-            tvPump = itemView.findViewById(R.id.tv_product_pump);
-            tvQuantity = itemView.findViewById(R.id.tv_quantity);
-            tvTotal = itemView.findViewById(R.id.tv_total);
+            name = itemView.findViewById(R.id.tv_product_name);
+            description = itemView.findViewById(R.id.tv_description);
+            price = itemView.findViewById(R.id.tv_price);
+
 
         }
     }

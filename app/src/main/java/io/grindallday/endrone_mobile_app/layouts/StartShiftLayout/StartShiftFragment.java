@@ -1,6 +1,7 @@
-package io.grindallday.endrone_mobile_app.layouts.LoginLayout;
+package io.grindallday.endrone_mobile_app.layouts.StartShiftLayout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,10 +29,10 @@ import java.util.Date;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentLoginBinding;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.model.User;
-import io.grindallday.endrone_mobile_app.repository.FireStoreRepository;
 
-public class LoginFragment extends Fragment {
+public class StartShiftFragment extends Fragment {
 
     private FragmentLoginBinding binding;
     private FirebaseAuth mAuth;
@@ -42,12 +43,12 @@ public class LoginFragment extends Fragment {
     private User currentUser = new User();
     SharedPreferences.Editor editor;
 
-    public LoginFragment() {
+    public StartShiftFragment() {
         // Required empty public constructor
     }
 
-    public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
+    public static StartShiftFragment newInstance() {
+        StartShiftFragment fragment = new StartShiftFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -83,7 +84,7 @@ public class LoginFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             //reload();
-            NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.homeFragment);
+            NavHostFragment.findNavController(StartShiftFragment.this).navigate(R.id.homeFragment);
         }
     }
 
@@ -203,11 +204,15 @@ public class LoginFragment extends Fragment {
         editor.putLong("loginMills",date.getTime());
         editor.apply();
 
-        //Toast.makeText(getContext(),"Successfull", Toast.LENGTH_SHORT).show();
-        NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.homeFragment);
-
+        startHomeActivity();
 
     }
+
+    private void startHomeActivity() {
+        Intent intent = new Intent(getContext(), HomeActivity.class);
+        startActivity(intent);
+    }
+
     public void getUser(String userId){
         firebaseFirestore = FirebaseFirestore.getInstance();
         DocumentReference documentReference = firebaseFirestore.collection("users").document(userId);

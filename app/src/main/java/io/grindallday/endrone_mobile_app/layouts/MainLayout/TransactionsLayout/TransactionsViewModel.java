@@ -1,10 +1,9 @@
-package io.grindallday.endrone_mobile_app.layouts.TransactionsLayout;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 

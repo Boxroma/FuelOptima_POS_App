@@ -1,6 +1,6 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments;
 
-import static io.grindallday.endrone_mobile_app.layouts.MainActivity.getScreenWidth;
+import static io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity.getScreenWidth;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -20,7 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentProductSaleBinding;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.AddProductDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
 import io.grindallday.endrone_mobile_app.model.Product;
 
 public class ProductSaleDialogFragment extends DialogFragment {

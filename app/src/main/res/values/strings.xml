@@ -12,4 +12,5 @@
     <string name="company_logo">Company Logo</string>
     <string name="emailTextHint">Enter Email</string>
     <string name="etPasswordHint">Enter Password</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
 </resources>

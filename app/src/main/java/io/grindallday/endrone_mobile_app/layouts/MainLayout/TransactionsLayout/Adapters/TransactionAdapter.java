@@ -1,4 +1,4 @@
-package io.grindallday.endrone_mobile_app.layouts.TransactionsLayout.Adapters;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

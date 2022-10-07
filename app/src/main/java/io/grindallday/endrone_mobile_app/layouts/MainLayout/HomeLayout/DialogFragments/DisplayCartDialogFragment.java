@@ -1,7 +1,7 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments;
 
-import static io.grindallday.endrone_mobile_app.layouts.MainActivity.getScreenHeight;
-import static io.grindallday.endrone_mobile_app.layouts.MainActivity.getScreenWidth;
+import static io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity.getScreenHeight;
+import static io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity.getScreenWidth;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentDisplayCartBinding;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters.CartItemsAdapter;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.RemoveProductDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.ShowCheckoutDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.CartItemsAdapter;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.RemoveProductDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.ShowCheckoutDialogListener;
 import io.grindallday.endrone_mobile_app.model.Product;
 
 public class DisplayCartDialogFragment extends DialogFragment {

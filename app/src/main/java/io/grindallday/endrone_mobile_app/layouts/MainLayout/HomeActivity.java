@@ -1,19 +1,24 @@
-package io.grindallday.endrone_mobile_app.layouts;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout;
 
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
@@ -26,13 +31,14 @@ import io.grindallday.endrone_mobile_app.databinding.ActivityFullscreenBinding;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.User;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private View mContentView;
     private ActivityFullscreenBinding binding;
+    private String TAG = "MainActivity";
 
 
     @Override
@@ -48,8 +54,9 @@ public class MainActivity extends AppCompatActivity {
         setFullScreen();
 
         toolbar = findViewById(R.id.toolbar);
+
+        //configureHomeToolBar();
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("LOL");
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
@@ -93,18 +100,33 @@ public class MainActivity extends AppCompatActivity {
     public void setNavigationDrawer(User user, List<Sale> saleList){
         View header = binding.navView.getHeaderView(0);
 
+        double currentSales = 0.0;
+        double expectedCash = 0.0;
+
+        if (saleList != null ){
+            for (Sale sale : saleList){
+                if(Objects.equals(sale.getClientType(), "WalkInClient")){
+                    expectedCash = expectedCash + sale.getTotal();
+                    Log.d(TAG, "Cash Sale Item Added: " + sale.getUid());
+                }
+                currentSales = currentSales + sale.getTotal();
+                Log.d(TAG, "Sale Item Added: " + sale.getUid());
+            }
+        }
+
         //Set Variables
         TextView userName = header.findViewById(R.id.tv_user_name);
         TextView position = header.findViewById(R.id.tv_position);
-        TextView currentSales = header.findViewById(R.id.tv_current_total_sales);
-        TextView expectedCash = header.findViewById(R.id.tv_current_total_cash_expected);
+        TextView tvCurrentSales = header.findViewById(R.id.tv_current_total_sales);
+        TextView tvExpectedCash = header.findViewById(R.id.tv_current_total_cash);
 
         //Set
         userName.setText(String.format("%s %s", user.getFirstName(),user.getSecondName()));
-        position.setText((user.getRole() == null || Objects.equals(user.getRole(), ""))? user.getRole() : "Attendant");
+        position.setText("Fuel Attendant");
         //
-        currentSales.setText(String.format("ZMW %,.2f", 0.0));
-        expectedCash.setText(String.format("ZMW %,.2f", 0.0));
+        tvCurrentSales.setText(String.format("ZMW %,.2f", currentSales));
+        tvExpectedCash.setText(String.format("ZMW %,.2f", expectedCash));
 
     }
+
 }

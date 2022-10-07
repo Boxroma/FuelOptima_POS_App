@@ -1,6 +1,6 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments;
 
-import static io.grindallday.endrone_mobile_app.layouts.MainActivity.getScreenWidth;
+import static io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity.getScreenWidth;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -12,7 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -30,9 +28,8 @@ import java.util.UUID;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentCheckoutDialogBinding;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters.ClientSpinnerAdapter;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.AddProductDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.MakeSaleDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.ClientSpinnerAdapter;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.MakeSaleDialogListener;
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;

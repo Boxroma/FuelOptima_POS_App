@@ -1,13 +1,11 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.Adapters;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -15,45 +13,35 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.R;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.HomeFragment;
 import io.grindallday.endrone_mobile_app.model.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
-    private Context context;
     private List<Product> productList;
-    private HomeFragment homeFragment;
 
-    public ProductAdapter(Context context, HomeFragment homeFragment) {
-        this.context = context;
+    public ProductAdapter() {
         this.productList = new ArrayList<>();
-        this.homeFragment = homeFragment;
         Log.d("ProductAdapter", "Adapter called");
     }
 
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ProductViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.product_list_item, parent, false));
+        return new ProductViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.trans_product_list_item, parent, false));
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.name.setText(product.getName());
-        holder.description.setText(product.getDescription());
-        holder.price.setText(String.format("ZMK %,.2f", product.getPrice()));
+        holder.tvName.setText(product.getName());
+        holder.tvPrice.setText(String.format("ZMW %,.2f", product.getPrice()));
+        holder.tvPump.setText(product.getPump_no());
+        holder.tvQuantity.setText(String.format("%,.2f", product.getQuantity()));
+        holder.tvTotal.setText(String.format("ZMW %,.2f", (product.getPrice()*product.getQuantity())));
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
-                homeFragment.showProductSaleDialog(product);
-            }
-        });
     }
 
     @Override
@@ -72,11 +60,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productList.clear();
         }
 
-        for(Product product : newProductList){
-            if(Objects.equals(product.getType(), "product")){
-                productList.add(product);
-            }
-        }
+        productList = newProductList;
+
         //productList.addAll(newProductList);
         notifyDataSetChanged();
         Log.d("ProductAdapter", "Values Updated");
@@ -85,17 +70,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, description, price;
+        public TextView tvName, tvPrice, tvPump, tvQuantity, tvTotal;
         public CardView cardView;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
 
             cardView = itemView.findViewById(R.id.materialCardView);
-            name = itemView.findViewById(R.id.tv_product_name);
-            description = itemView.findViewById(R.id.tv_description);
-            price = itemView.findViewById(R.id.tv_price);
-
+            tvName = itemView.findViewById(R.id.tv_product_name);
+            tvPrice = itemView.findViewById(R.id.tv_price);
+            tvPump = itemView.findViewById(R.id.tv_product_pump);
+            tvQuantity = itemView.findViewById(R.id.tv_quantity);
+            tvTotal = itemView.findViewById(R.id.tv_total);
 
         }
     }

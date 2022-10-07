@@ -1,6 +1,5 @@
-package io.grindallday.endrone_mobile_app.layouts.TransactionsLayout;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout;
 
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -14,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentTransactionsBinding;
-import io.grindallday.endrone_mobile_app.layouts.TransactionsLayout.Adapters.TransactionAdapter;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.Adapters.TransactionAdapter;
 
 public class TransactionsFragment extends Fragment {
 

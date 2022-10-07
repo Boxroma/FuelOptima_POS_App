@@ -1,4 +1,4 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;

@@ -1,4 +1,4 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.R;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments.DisplayCartDialogFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.DisplayCartDialogFragment;
 import io.grindallday.endrone_mobile_app.model.Product;
 
 public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.ProductViewHolder> {

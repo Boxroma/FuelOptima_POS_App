@@ -1,6 +1,7 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,20 +21,19 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentHomeBinding;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.Adapters.ProductAdapter;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments.CheckoutDialogFragment;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments.DisplayCartDialogFragment;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments.FuelSaleDialogFragment;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.DialogFragments.ProductSaleDialogFragment;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.AddProductDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.MakeSaleDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.RemoveProductDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.HomeLayout.interfaces.ShowCheckoutDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.MainActivity;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.ProductAdapter;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.CheckoutDialogFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.DisplayCartDialogFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.FuelSaleDialogFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.ProductSaleDialogFragment;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.MakeSaleDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.RemoveProductDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.ShowCheckoutDialogListener;
+import io.grindallday.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActivity;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;
@@ -50,7 +49,7 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
     private FragmentHomeBinding binding;
     private HomeViewModel homeViewModel;
     private ProductAdapter productAdapter;
-    private List<Product> cartList;
+    private ArrayList<Product> cartList;
     private List<Client> clientList;
     private List<Sale> saleList;
     private User currentUser;
@@ -69,8 +68,9 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if(firebaseUser == null){
             //reload();
+            Intent intent = new Intent(getActivity(), StartShiftActivity.class);
+            startActivity(intent);
 
-            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_loginFragment);
         } else {
             //set user data
             String userId = firebaseUser.getUid();
@@ -152,7 +152,6 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
             if (user != null){
                 currentUser = user;
                 Log.d(TAG,"Current User Info: " + currentUser.getFirstName());
-                ((MainActivity) requireActivity()).setNavigationDrawer(currentUser,saleList);
             }
         });
 
@@ -177,7 +176,7 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
         homeViewModel.cartItems.observe(getViewLifecycleOwner(), productList1 -> {
             if (productList1 != null){
                 setCartButtonUI(productList1);
-                cartList = productList1;
+                cartList = (ArrayList<Product>) productList1;
                 Log.d(TAG, "Cart Item changed");
             }
         });
@@ -194,6 +193,7 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
                 saleList = sales;
                 updateTotal();
                 Log.d(TAG, "Sales List Updated");
+                setDrawerValues();
             }
         });
 
@@ -232,7 +232,11 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
             }
         }
 
-        ((MainActivity) requireActivity()).setToolbarText(String.format("ZMW %,.2f",total));
+        ((HomeActivity) requireActivity()).setToolbarText(String.format("ZMW %,.2f",total));
+    }
+
+    public void setDrawerValues(){
+        ((HomeActivity) requireActivity()).setNavigationDrawer(currentUser,saleList);
     }
 
     public void setCartButtonUI(List<Product> productList){
@@ -279,7 +283,8 @@ public class HomeFragment extends Fragment implements AddProductDialogListener, 
         homeViewModel.makeSale(sale);
 
         //Clear cart items
-        cartList = new ArrayList<>();
+        cartList.clear();
+        setCartButtonUI(cartList);
 
     }
 

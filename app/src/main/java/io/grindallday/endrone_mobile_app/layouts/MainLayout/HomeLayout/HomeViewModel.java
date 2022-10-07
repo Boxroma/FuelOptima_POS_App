@@ -1,4 +1,4 @@
-package io.grindallday.endrone_mobile_app.layouts.HomeLayout;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout;
 
 import android.app.Application;
 import android.util.Log;
