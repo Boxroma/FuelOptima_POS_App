@@ -11,7 +11,6 @@ import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.repository.FireStoreRepository;
 
 public class TransactionsViewModel extends AndroidViewModel {
-    // TODO: Implement the ViewModel
     private final FireStoreRepository fireStoreRepository;
 
 

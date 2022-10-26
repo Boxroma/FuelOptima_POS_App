@@ -24,7 +24,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="Select Client Type"
+            android:hint="Select Payment Type"
             tools:ignore="NestedWeights" >
 
             <AutoCompleteTextView

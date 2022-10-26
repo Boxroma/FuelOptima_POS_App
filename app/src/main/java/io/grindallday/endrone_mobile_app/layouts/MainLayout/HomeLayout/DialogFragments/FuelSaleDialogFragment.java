@@ -184,11 +184,22 @@ public class FuelSaleDialogFragment extends DialogFragment {
             });
 
             binding.btAdd.setOnClickListener(view -> {
-
+                // Over Engineered to avoid the static reference from the active Product object
+                Product product = new Product(
+                        activeProduct.getProduct_id(),
+                        activeProduct.getName(),
+                        activeProduct.getDescription(),
+                        activeProduct.getPrice(),
+                        activeProduct.getType(),
+                        activeProduct.getStation_id(),
+                        activeProduct.getPump_no(),
+                        activeProduct.getQuantity(),
+                        activeProduct.isActive()
+                );
                 if (quantity != null){
-                    if(activeProduct != null && !Objects.equals(activeProduct.getPump_no(), "")){
-                        activeProduct.setQuantity(quantity);
-                        mCallback.onAddProduct(activeProduct);
+                    if(!Objects.equals(product.getPump_no(), "")){
+                        product.setQuantity(quantity);
+                        mCallback.onAddProduct(product);
                         dismiss();
                     } else {
                         Toast.makeText(getContext(),"Please Select Pump",Toast.LENGTH_SHORT).show();

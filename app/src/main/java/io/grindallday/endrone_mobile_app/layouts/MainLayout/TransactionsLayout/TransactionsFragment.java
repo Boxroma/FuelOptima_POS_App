@@ -19,7 +19,6 @@ import io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.A
 
 public class TransactionsFragment extends Fragment {
 
-    private TransactionsViewModel transactionsViewModel;
     TransactionAdapter transactionAdapter;
     FragmentTransactionsBinding binding;
     RecyclerView recyclerView;
@@ -39,9 +38,10 @@ public class TransactionsFragment extends Fragment {
         recyclerView = binding.recyclerView;
         transactionAdapter = new TransactionAdapter(recyclerView,getContext());
 
-        transactionsViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider
+        TransactionsViewModel transactionsViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider
                 .AndroidViewModelFactory
-                .getInstance(requireActivity().getApplication())).get(TransactionsViewModel.class);
+                .getInstance(requireActivity().getApplication()))
+                .get(TransactionsViewModel.class);
 
         transactionsViewModel.getSales().observe(getViewLifecycleOwner(), sales -> {
             if(sales!=null){
@@ -49,8 +49,6 @@ public class TransactionsFragment extends Fragment {
                 transactionAdapter.setSaleList(sales);
             }
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-            //linearLayoutManager.setReverseLayout(true);
-            //linearLayoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(transactionAdapter);
         });

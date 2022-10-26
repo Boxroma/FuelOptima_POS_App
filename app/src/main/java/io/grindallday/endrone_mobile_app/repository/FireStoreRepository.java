@@ -3,35 +3,30 @@ package io.grindallday.endrone_mobile_app.repository;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.Station;
 import io.grindallday.endrone_mobile_app.model.User;
+import timber.log.Timber;
 
 public class FireStoreRepository {
 
@@ -42,6 +37,7 @@ public class FireStoreRepository {
     private final MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
     private final String userId;
     private final String stationId;
+    private final String shiftId;
     private final Long loginMills;
 
     public FireStoreRepository(Application application) {
@@ -49,9 +45,10 @@ public class FireStoreRepository {
         userId = sharedPref.getString("clientId","");
         stationId = sharedPref.getString("stationId", "");
         loginMills = sharedPref.getLong("loginMills",0);
+        shiftId =  sharedPref.getString("shiftId","");
 
 
-        Log.d(TAG, String.format("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s",userId,stationId));
+        Timber.tag(TAG).d("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s", userId, stationId);
 
     }
 
@@ -66,9 +63,9 @@ public class FireStoreRepository {
     public MutableLiveData<List<Product>> getProductLiveData(){
 
         Query query = firebaseFirestore.collection("products").whereEqualTo("station_id",stationId);
-        query.addSnapshotListener((snapshots, error) -> {
-            if (error != null){
-                Log.w("FireStoreRepository", error);
+        query.addSnapshotListener(MetadataChanges.INCLUDE, (snapshots, error) -> {
+            if (error != null) {
+                Timber.tag("FireStoreRepository").w(error);
                 return;
             }
 
@@ -81,22 +78,23 @@ public class FireStoreRepository {
                                         doc.getId(),
                                         doc.getString("name"),
                                         doc.getString("description"),
-                                        doc.getDouble("price") !=null ? doc.getDouble("price") : 0.0,
+                                        doc.getDouble("price") != null ? doc.getDouble("price") : 0.0,
                                         doc.getString("type"),
                                         doc.getString("station_id"),
                                         "",
-                                        0)
+                                        doc.getDouble("quantity") != null ? doc.getDouble("quantity") : 0.0,
+                                        doc.getBoolean("active") != null ? doc.getBoolean("active") : false)
                         );
-                        Log.d(TAG, doc.getId());
+                        Timber.tag(TAG).d(doc.getId());
                     }
 
                 }
             } else {
-                Log.e(TAG,"snapshots not returned");
+                Timber.tag(TAG).e("snapshots not returned");
             }
             String source = snapshots.getMetadata().isFromCache() ? "local cache" : "server";
-            Log.d("FireStoreRepository", "Data fetched from : " + source);
-            Log.d("FireStoreRepository", "Current Products: " + products);
+            Timber.tag("FireStoreRepository").d("Data fetched from : %s", source);
+            Timber.tag("FireStoreRepository").d("Current Products: %s", products);
             productListliveData.setValue(products);
         });
 
@@ -104,20 +102,31 @@ public class FireStoreRepository {
     }
 
     /**
+     * Method to Update Product Info for the fuel station
+     * */
+    public void updateProductDetails (String id, Double quantity) {
+        DocumentReference productRef = firebaseFirestore.collection("products").document(id);
+
+        productRef.update("quantity", quantity)
+                .addOnSuccessListener(unused -> Timber.tag(TAG).d("Updated %s quantity to %s",id,quantity))
+                .addOnFailureListener(e -> Timber.tag(TAG).d(e));
+    }
+
+    /**
      * Method to Pull Sates for the fuel station
      * */
     public MutableLiveData<List<Sale>> getSaleLiveData(){
         Date date = new Date(loginMills);
-        Log.d(TAG, "Login Timestamp: " + date);
+        Timber.tag(TAG).d("Login Timestamp: %s", date);
 
         Query query = firebaseFirestore.collection("sales")
                 .whereEqualTo("station_id",stationId)
                 .whereEqualTo("attendant_id",userId)
                 .whereGreaterThan("time",date);
 
-        query.addSnapshotListener((snapshots, error) -> {
+        query.addSnapshotListener(MetadataChanges.INCLUDE,(snapshots, error) -> {
             if (error != null){
-                Log.w("FireStoreRepository", error);
+                Timber.tag("FireStoreRepository").w(error);
                 return;
             }
 
@@ -125,14 +134,14 @@ public class FireStoreRepository {
             if (snapshots != null) {
                 for (QueryDocumentSnapshot doc : snapshots) {
 
-                    Log.d(TAG, "Product List: " + doc.get("productList"));
+                    Timber.tag(TAG).d("Product List: %s", doc.get("productList"));
                     List<Product> productList = new ArrayList<>();
 
                     // Get Product List
                     List<Map<String, Object>> objectList = (List<Map<String, Object>>) doc.get("productList");
 
                     if (objectList != null){
-                        Log.d(TAG,"Object List Not Null");
+                        Timber.tag(TAG).d("Object List Not Null");
                         for (Map<String, Object> entry : objectList) {
                             productList.add(
                                     new Product(
@@ -143,21 +152,23 @@ public class FireStoreRepository {
                                             entry.get("type").toString(),
                                             entry.get("station_id").toString(),
                                             entry.get("pump_no").toString(),
-                                            Double.parseDouble(entry.get("quantity").toString())
+                                            Double.parseDouble(entry.get("quantity").toString()),
+                                            true
                                     )
                             );
                         }
                     } else {
-                        Log.d(TAG,"Failed to return Product List");
+                        Timber.tag(TAG).d("Failed to return Product List");
                     }
 
-                    Log.d(TAG,"Count of products in sale: " + productList.size());
+                    Timber.tag(TAG).d("Count of products in sale: %s", productList.size());
 
                     //Get Sale Data and create Sales Object
                     sales.add(
                             new Sale(doc.getString("uid"),
                                     doc.getString("attendant_id"),
                                     doc.getString("attendant_name"),
+                                    doc.getString("shift_Id"),
                                     doc.getString("client_id"),
                                     doc.getString("clientType"),
                                     doc.getString("client_name"),
@@ -167,16 +178,16 @@ public class FireStoreRepository {
                                     doc.getDouble("total"),
                                     productList)
                     );
-                    Log.d(TAG, "document added " + doc.getId());
-                    Log.d(TAG, "date time: " + doc.getDate("time"));
+                    Timber.tag(TAG).d("document added %s", doc.getId());
+                    Timber.tag(TAG).d("date time: %s", doc.getDate("time"));
                 }
 
             } else {
-                Log.e(TAG,"snapshots not returned");
+                Timber.tag(TAG).e("snapshots not returned");
             }
             String source = snapshots.getMetadata().isFromCache() ? "local cache" : "server";
-            Log.d("FireStoreRepository", "Data fetched from : " + source);
-            Log.d("FireStoreRepository", "Current Sales: " + sales.size());
+            Timber.tag("FireStoreRepository").d("Data fetched from : %s", source);
+            Timber.tag("FireStoreRepository").d("Current Sales: %s", sales.size());
             saleListliveData.setValue(sales);
         });
 
@@ -193,13 +204,13 @@ public class FireStoreRepository {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Log.d(TAG, "Sale Succesfully Created");
+                        Timber.tag(TAG).d("Sale Successfully Created");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Error Creating Sale: " + e);
+                        Timber.tag(TAG).w(e);
                     }
                 });
     }
@@ -211,82 +222,97 @@ public class FireStoreRepository {
 
         Query query = firebaseFirestore.collection("clients").whereEqualTo("stationId",stationId);
 
-        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snapshots,
-                                @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    Log.w("FireStoreRepository", error);
-                    return;
-                }
-
-                List<Client> clients = new ArrayList<>();
-                if (snapshots != null) {
-                    for (QueryDocumentSnapshot doc : snapshots) {
-
-                        //Get Sale Data and create Sales Object
-                        clients.add(
-                                new Client(
-                                        doc.getId(),
-                                        doc.getString("name"),
-                                        doc.getString("email"),
-                                        doc.getString("number"),
-                                        doc.getTimestamp("dateCreated"),
-                                        doc.getString("station_id"),
-                                        doc.getDouble("total")
-                                )
-                        );
-                        Log.d(TAG, "Client Name: " + doc.getString("name"));
-                    }
-
-                } else {
-                    Log.e(TAG,"snapshots not returned");
-                }
-                String source = snapshots.getMetadata().isFromCache() ? "local cache" : "server";
-                Log.d("FireStoreRepository", "Data fetched from : " + source);
-                Log.d("FireStoreRepository", "Current Client Count: " + clients.size());
-                clientListLiveData.setValue(clients);
+        query.addSnapshotListener(MetadataChanges.INCLUDE, (snapshots, error) -> {
+            if (error != null){
+                Timber.tag(TAG).w(error);
+                return;
             }
+
+            List<Client> clients = new ArrayList<>();
+            if (snapshots != null) {
+                for (QueryDocumentSnapshot doc : snapshots) {
+
+                    //Get Sale Data and create Sales Object
+                    clients.add(
+                            new Client(
+                                    doc.getId(),
+                                    doc.getString("name"),
+                                    doc.getString("email"),
+                                    doc.getString("number"),
+                                    doc.getTimestamp("dateCreated"),
+                                    doc.getString("station_id"),
+                                    doc.getDouble("currentBalance")
+                            )
+                    );
+                    Timber.tag(TAG).d("Client Name: %s", doc.getString("name"));
+                }
+
+            } else {
+                Timber.tag(TAG).e("snapshots not returned");
+            }
+            String source = snapshots.getMetadata().isFromCache() ? "local cache" : "server";
+            Timber.tag("FireStoreRepository").d("Data fetched from : %s", source);
+            Timber.tag("FireStoreRepository").d("Current Client Count: %s", clients.size());
+            clientListLiveData.setValue(clients);
         });
 
         return clientListLiveData;
     }
 
     /**
+     * Method to Update Client Info for the fuel station
+     * */
+    public void updateClientDetails (Client client) {
+
+        DocumentReference clientRef = firebaseFirestore.collection("clients").document(client.getUid());
+        clientRef.update("currentBalance", client.getCurrentBalance())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Timber.tag(TAG).d("Updated Client %s new balance = %s",client.getName(),client.getCurrentBalance());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Timber.tag(TAG).d(e);
+                    }
+                });
+    }
+
+
+    /**
      * Method to Pull User Details for the fuel station
      * */
     public MutableLiveData<User> getUserInfo(){
 
-        Log.d(TAG, "User Id: " + userId);
+        Timber.tag(TAG).d("User Id: %s", userId);
 
         if(!Objects.equals(userId, "")){
             DocumentReference documentReference = firebaseFirestore.collection("users").document(userId);
-            documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                    if(error != null){
-                        Log.d(TAG, "Listen Failed: ", error);
-                    }
-
-                    User user = new User();
-                    if(documentSnapshot != null){
-                        Log.d(TAG, "user data: " + documentSnapshot.getData());
-                        user = new User(
-                                documentSnapshot.getString("uid"),
-                                documentSnapshot.getString("firstName"),
-                                documentSnapshot.getString("secondName"),
-                                documentSnapshot.getString("email"),
-                                documentSnapshot.getString("date"),
-                                documentSnapshot.getString("nrc"),
-                                documentSnapshot.getString("stationId"),
-                                documentSnapshot.getString("stationName"),
-                                documentSnapshot.getString("stationAddress"),
-                                documentSnapshot.getString("role"));
-                    }
-
-                    userMutableLiveData.setValue(user);
-
+            documentReference.addSnapshotListener(MetadataChanges.INCLUDE, (documentSnapshot, error) -> {
+                if(error != null){
+                    Timber.tag(TAG).d(error, "Listen Failed: ");
                 }
+
+                User user = new User();
+                if(documentSnapshot != null){
+                    Timber.tag(TAG).d("user data: %s", documentSnapshot.getData());
+                    user = new User(
+                            documentSnapshot.getString("uid"),
+                            documentSnapshot.getString("firstName"),
+                            documentSnapshot.getString("secondName"),
+                            documentSnapshot.getString("email"),
+                            documentSnapshot.getString("date"),
+                            documentSnapshot.getString("nrc"),
+                            documentSnapshot.getString("stationId"),
+                            documentSnapshot.getString("stationName"),
+                            documentSnapshot.getString("stationAddress"),
+                            documentSnapshot.getString("role"));
+                }
+
+                userMutableLiveData.setValue(user);
+
             });
         }
 
@@ -298,34 +324,32 @@ public class FireStoreRepository {
      * */
     public MutableLiveData<Station> getStationInfo(){
 
-        Log.d(TAG, "get Station ID: " + stationId);
+        Timber.tag(TAG).d("get Station ID: %s", stationId);
 
         DocumentReference document = firebaseFirestore.collection("stations").document(stationId);
-        document.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.d(TAG, "Listen Failed: ", error);
-                }
-
-                Station station = new Station();
-                if (documentSnapshot != null) {
-                    Log.d(TAG, "Station Data: " + documentSnapshot.getString("name"));
-                    station = new Station(
-                            documentSnapshot.getString("address"),
-                            documentSnapshot.getTimestamp("created"),
-                            documentSnapshot.getString("dieselTankSize"),
-                            documentSnapshot.getString("petrolTankSize"),
-                            documentSnapshot.getString("keroseneTankSize"),
-                            documentSnapshot.getString("noDieselPumps"),
-                            documentSnapshot.getString("noPetrolPumps"),
-                            documentSnapshot.getString("noKerosenePumps"),
-                            documentSnapshot.getString("name"));
-                }
-                stationMutableLiveData.setValue(station);
+        document.addSnapshotListener(MetadataChanges.INCLUDE, (documentSnapshot, error) -> {
+            if (error != null) {
+                Timber.tag(TAG).d(error, "Listen Failed: ");
             }
+
+            Station station = new Station();
+            if (documentSnapshot != null) {
+                Timber.tag(TAG).d("Station Data: %s", documentSnapshot.getString("name"));
+                station = new Station(
+                        documentSnapshot.getString("address"),
+                        documentSnapshot.getTimestamp("created"),
+                        documentSnapshot.getDouble("dieselTankSize").toString(),
+                        documentSnapshot.getDouble("petrolTankSize").toString(),
+                        documentSnapshot.getDouble("keroseneTankSize").toString(),
+                        documentSnapshot.getString("noDieselPumps"),
+                        documentSnapshot.getString("noPetrolPumps"),
+                        documentSnapshot.getString("noKerosenePumps"),
+                        documentSnapshot.getString("name"));
+            }
+            stationMutableLiveData.setValue(station);
         });
         return stationMutableLiveData;
     }
+
 
 }

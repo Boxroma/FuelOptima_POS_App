@@ -89,6 +89,7 @@ public class PrintThread extends Thread {
             posApiHelper.PrintStr("================================");
             // For loop
             for(Product product : sale.getProductList()){
+                Log.d(TAG,"print product: " + product.getQuantity());
                 posApiHelper.PrintStr(String.format("%s %,.2f %,.2f %,.2f",product.getName(),product.getPrice(),product.getQuantity(),(product.getQuantity() * product.getPrice())));
             }
             posApiHelper.PrintStr("================================");

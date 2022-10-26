@@ -22,13 +22,14 @@ import java.util.Objects;
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentProductSaleBinding;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
 import io.grindallday.endrone_mobile_app.model.Product;
+import timber.log.Timber;
 
 public class ProductSaleDialogFragment extends DialogFragment {
 
     public static String TAG = "ProductSaleDialogFragment";
-    public static String product_id;
-    public static Product activeProduct = new Product();
-    private static Double quantity;
+    public String product_id;
+    public static Product activeProduct;
+    private Double quantity = 1.0;
     AddProductDialogListener mCallback;
     DialogFragmentProductSaleBinding binding;
 
@@ -37,7 +38,6 @@ public class ProductSaleDialogFragment extends DialogFragment {
 
     public static ProductSaleDialogFragment newInstance(Product product){
         activeProduct = product;
-        quantity = 1.0;
         return new ProductSaleDialogFragment();
     }
 
@@ -92,32 +92,54 @@ public class ProductSaleDialogFragment extends DialogFragment {
         binding.tvProductName.setVisibility(View.INVISIBLE);
         binding.tvProductDescription.setText(product.getDescription());
         binding.tvProductUnitPrice.setText(String.format("Unit Price: ZMK %,.2f", product.getPrice())); //ZMK %,.2f
+        binding.tvProductStockCount.setText(String.format("Stock Count: %,.2f", product.getQuantity()));
     }
 
     @SuppressLint("DefaultLocale")
     public void setUi(){
         if(activeProduct != null) {
 
-            binding.npQuantity.setMinValue(1);
-            binding.npQuantity.setMaxValue(100);
+            //binding.numberPicker.setMinValue(1);
+            //binding.npQuantity.setMaxValue(100);
 
-            binding.etCost.setText(String.format("ZMK %,.2f", binding.npQuantity.getValue() * activeProduct.getPrice()));
+            binding.etCost.setText(String.format("ZMK %,.2f", quantity * activeProduct.getPrice()));
 
-            binding.npQuantity.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            binding.numberPicker.setMaxValue((int) activeProduct.getQuantity());
+
+            binding.numberPicker.setNumberPickerChangeListener(new it.sephiroth.android.library.numberpicker.NumberPicker.OnNumberPickerChangeListener() {
                 @Override
-                public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                    quantity = (double) i1;
-                    Log.d(TAG,"int value = " + i);
-                    Log.d(TAG, "int1 value = " + i1);
+                public void onProgressChanged(@NonNull it.sephiroth.android.library.numberpicker.NumberPicker numberPicker, int i, boolean b) {
+                    quantity = (double) i;
+                    Timber.tag(TAG).d("int Value%s", 1);
                     binding.etCost.setText(String.format("ZMK %,.2f", quantity * activeProduct.getPrice()));
+                }
+
+                @Override
+                public void onStartTrackingTouch(@NonNull it.sephiroth.android.library.numberpicker.NumberPicker numberPicker) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(@NonNull it.sephiroth.android.library.numberpicker.NumberPicker numberPicker) {
+
                 }
             });
 
             binding.btAdd.setOnClickListener(view -> {
                 Toast.makeText(getContext(),"Add button Pressed",Toast.LENGTH_SHORT).show();
-                Product product = activeProduct;
+                // Over Engineered to avoid the static reference from the active Product object
+                Product product = new Product(
+                        activeProduct.getProduct_id(),
+                        activeProduct.getName(),
+                        activeProduct.getDescription(),
+                        activeProduct.getPrice(),
+                        activeProduct.getType(),
+                        activeProduct.getStation_id(),
+                        activeProduct.getPump_no(),
+                        activeProduct.getQuantity(),
+                        activeProduct.isActive()
+                );
                 product.setQuantity(quantity);
-                //
                 mCallback.onAddProduct(product);
                 dismiss();
             });

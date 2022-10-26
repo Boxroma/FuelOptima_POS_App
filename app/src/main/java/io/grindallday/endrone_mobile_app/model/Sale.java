@@ -9,6 +9,7 @@ public class Sale {
     private String uid;
     private String attendant_id;
     private String attendantName;
+    private String shift_id;
     private String clientId;
     private String clientType;
     private String clientName;
@@ -21,6 +22,7 @@ public class Sale {
     public Sale(String uid,
                 String attendantId,
                 String attendantName,
+                String shift_id,
                 String clientId,
                 String clientType,
                 String clientName,
@@ -32,6 +34,7 @@ public class Sale {
         this.uid = uid;
         this.attendant_id = attendantId;
         this.attendantName = attendantName;
+        this.shift_id = shift_id;
         this.clientId = clientId;
         this.clientType = clientType;
         this.clientName = clientName;
@@ -130,5 +133,16 @@ public class Sale {
     public void setClientName(String clientName) {
         this.clientName = clientName;
     }
+
+
+    public String getShift_id() {
+        return shift_id;
+    }
+
+    public void setShift_id(String shift_id) {
+        this.shift_id = shift_id;
+    }
+
+
 
 }

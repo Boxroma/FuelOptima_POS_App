@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,13 +26,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.type.DateTime;
 
 import java.util.Date;
+import java.util.UUID;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentLoginBinding;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
+import io.grindallday.endrone_mobile_app.model.Shift;
 import io.grindallday.endrone_mobile_app.model.User;
+import timber.log.Timber;
 
 public class StartShiftFragment extends Fragment {
 
@@ -112,7 +118,7 @@ public class StartShiftFragment extends Fragment {
                             "Reload successful!",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e(TAG, "reload", task.getException());
+                    Timber.tag(TAG).e(task.getException(), "reload");
                     Toast.makeText(getContext(),
                             "Failed to reload user.",
                             Toast.LENGTH_SHORT).show();
@@ -144,7 +150,7 @@ public class StartShiftFragment extends Fragment {
     }
 
     private void signIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
+        Timber.tag(TAG).d("signIn: %s", email);
         if (!validateForm()) {
             return;
         }
@@ -157,18 +163,19 @@ public class StartShiftFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
+                            Timber.tag(TAG).d("signInWithEmail:success");
 
                             //Set user id for future use
                             firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null){
-                                Log.d(TAG, " User Id has been set: " + firebaseUser.getUid());
+                                Timber.tag(TAG).d(" User Id has been set: %s", firebaseUser.getUid());
                                 getUser(firebaseUser.getUid());
+
                             }
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Timber.tag(TAG).w(task.getException(), "signInWithEmail:failure");
                             Toast.makeText(getContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -197,15 +204,13 @@ public class StartShiftFragment extends Fragment {
     public void setUserVariables(User user){
         Date date = new Date(System.currentTimeMillis());
 
-        Log.d(TAG, String.format("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s",user.getUid(),user.getStationId()));
+        Timber.tag(TAG).d("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s", user.getUid(), user.getStationId());
         //Set Preference
-        editor.putString("clientId",user.getUid());
-        editor.putString("stationId",user.getStationId());
-        editor.putLong("loginMills",date.getTime());
+        editor.putString("clientId", user.getUid());
+        editor.putString("stationId", user.getStationId());
+        editor.putLong("loginMills", date.getTime());
+        editor.putString("shiftId", UUID.randomUUID().toString());
         editor.apply();
-
-        startHomeActivity();
-
     }
 
     private void startHomeActivity() {
@@ -224,7 +229,7 @@ public class StartShiftFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     if (documentSnapshot.exists()){
-                        Log.d(TAG, "DocumentSnapshot data: " + documentSnapshot.getData());
+                        Timber.tag(TAG).d("DocumentSnapshot data: %s", documentSnapshot.getData());
                         user = new User(
                                 documentSnapshot.getString("uid"),
                                 documentSnapshot.getString("firstName"),
@@ -238,18 +243,17 @@ public class StartShiftFragment extends Fragment {
                                 documentSnapshot.getString("role"));
 
                         setUserVariables(user);
+                        startHomeActivity();
                     } else {
-                        Log.d(TAG, "No such document");
+                        Timber.tag(TAG).d("No such document");
                     }
 
                     currentUser = user;
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Timber.tag(TAG).d(task.getException(), "get failed with ");
                 }
 
             }
         });
     }
-
-
 }

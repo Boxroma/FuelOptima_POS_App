@@ -8,12 +8,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;
+import io.grindallday.endrone_mobile_app.model.Shift;
 import io.grindallday.endrone_mobile_app.model.Station;
 import io.grindallday.endrone_mobile_app.model.User;
 import io.grindallday.endrone_mobile_app.repository.FireStoreRepository;
@@ -56,6 +61,14 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Client>> getClientList(){
         return fireStoreRepository.getClientsLiveData();
+    }
+
+    public void updateClient(Client client){
+        fireStoreRepository.updateClientDetails(client);
+    }
+
+    public void updateProduct(String id, Double quantity){
+        fireStoreRepository.updateProductDetails(id,quantity);
     }
 
     // Method to handle add to cart action

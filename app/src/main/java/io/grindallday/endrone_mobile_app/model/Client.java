@@ -21,6 +21,9 @@ public class Client {
         this.currentBalance = currentBalance;
     }
 
+    public Client() {
+    }
+
     public String getUid() {
         return uid;
     }

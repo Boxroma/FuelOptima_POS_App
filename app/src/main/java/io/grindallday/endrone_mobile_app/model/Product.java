@@ -10,8 +10,17 @@ public class Product {
     private String station_id;
     private String pump_no;
     private double quantity;
+    private boolean active;
 
-    public Product (String product_id, String name, String description, double price , String type, String station_id,String pump_no, double quantity){
+    public Product (String product_id,
+                    String name,
+                    String description,
+                    double price ,
+                    String type,
+                    String station_id,
+                    String pump_no,
+                    double quantity,
+                    boolean active){
         this.product_id = product_id;
         this.name = name;
         this.description = description;
@@ -20,6 +29,7 @@ public class Product {
         this.station_id = station_id;
         this.pump_no = pump_no;
         this.quantity = quantity; //Depending on the context its been used.
+        this.active = active;
     }
 
     public Product(String name) {
@@ -93,6 +103,14 @@ public class Product {
 
     public void setPump_no(String pump_no) {
         this.pump_no = pump_no;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 }

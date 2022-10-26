@@ -12,19 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Endrone_Mobile_App"
+        android:name=".ApplicationController"
         tools:targetApi="31">
+        <activity
+            android:name=".layouts.EndShiftLayout.EndShiftActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"/>
         <activity
             android:name=".layouts.StartShiftLayout.StartShiftActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:label="@string/title_activity_fullscreen"
-            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen">
-        </activity>
+            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"/>
         <activity
             android:name=".layouts.MainLayout.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

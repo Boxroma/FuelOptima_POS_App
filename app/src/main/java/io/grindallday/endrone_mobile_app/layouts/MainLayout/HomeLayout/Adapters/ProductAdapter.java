@@ -20,18 +20,19 @@ import java.util.Objects;
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.HomeFragment;
 import io.grindallday.endrone_mobile_app.model.Product;
+import timber.log.Timber;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
-    private Context context;
-    private List<Product> productList;
-    private HomeFragment homeFragment;
+    private final Context context;
+    private final List<Product> productList;
+    private final HomeFragment homeFragment;
 
     public ProductAdapter(Context context, HomeFragment homeFragment) {
         this.context = context;
         this.productList = new ArrayList<>();
         this.homeFragment = homeFragment;
-        Log.d("ProductAdapter", "Adapter called");
+        Timber.tag("ProductAdapter").d("Adapter called");
     }
 
     @NonNull
@@ -73,7 +74,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         for(Product product : newProductList){
-            if(Objects.equals(product.getType(), "product")){
+            if((!Objects.equals(product.getType(), "fuel"))&&(product.isActive())&&(product.getQuantity()>=1)){
                 productList.add(product);
             }
         }

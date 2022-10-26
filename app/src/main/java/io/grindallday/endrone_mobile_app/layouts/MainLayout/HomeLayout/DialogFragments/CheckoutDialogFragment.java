@@ -4,8 +4,11 @@ import static io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity.
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +31,7 @@ import java.util.UUID;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentCheckoutDialogBinding;
+import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.ClientSpinnerAdapter;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.MakeSaleDialogListener;
 import io.grindallday.endrone_mobile_app.model.Client;
@@ -35,6 +39,7 @@ import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.Station;
 import io.grindallday.endrone_mobile_app.model.User;
+import timber.log.Timber;
 
 public class CheckoutDialogFragment extends DialogFragment {
 
@@ -44,21 +49,24 @@ public class CheckoutDialogFragment extends DialogFragment {
     public static List<Client> clientList = new ArrayList<>();
     private static Client activeClient;
     private static User user;
-    private static Station station;
+    private static String shiftId;
+    private static String selectedClientType;
     private static Sale sale;
     private static double saleTotal;
     MakeSaleDialogListener makeSaleDialogListener;
     DialogFragmentCheckoutDialogBinding binding;
+    Context context;
     private ClientSpinnerAdapter adapter;
 
     public CheckoutDialogFragment() {
     }
 
-    public static CheckoutDialogFragment newInstance(List<Product> productList, List<Client> clientList,Station station, User user){
+    public static CheckoutDialogFragment newInstance(List<Product> productList, List<Client> clientList, Station station, User user, Application application){
+        SharedPreferences sharedPref = application.getSharedPreferences("pref", Context.MODE_PRIVATE);
         activeProductList = productList;
         CheckoutDialogFragment.clientList = clientList;
         CheckoutDialogFragment.user = user;
-        CheckoutDialogFragment.station = station;
+        CheckoutDialogFragment.shiftId = sharedPref.getString("shiftId","");
         return new CheckoutDialogFragment();
     }
 
@@ -120,7 +128,7 @@ public class CheckoutDialogFragment extends DialogFragment {
         setTotal();
 
         //Set Client Type
-        String[] clientTypes = { "Drop In Client", "Pre-Paid Client"};
+        String[] clientTypes = { "Cash", "Mobile-Money", "Pre-Paid"};
         ArrayAdapter clientTypeAdapter = new ArrayAdapter(getContext(), R.layout.list_item,clientTypes);
         binding.spClientType.setAdapter(clientTypeAdapter);
 
@@ -128,11 +136,12 @@ public class CheckoutDialogFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(requireContext(),"Selected Type: " + clientTypes[i], Toast.LENGTH_SHORT).show();
-                if(i == 0){
+                if(i == 0 || i == 1){
                     binding.llSelectClient.setVisibility(View.INVISIBLE);
                 }else {
                     binding.llSelectClient.setVisibility(View.VISIBLE);
                 }
+                selectedClientType = clientTypes[i];
             }
 
         });
@@ -155,8 +164,14 @@ public class CheckoutDialogFragment extends DialogFragment {
 
         //Set Button Listener
         binding.btConfirmSale.setOnClickListener(view -> {
-            makeSale(activeProductList,user,activeClient);
-            dismiss();
+            if (selectedClientType != null){
+                makeSale(activeProductList,user,activeClient);
+                dismiss();
+            }
+            else {
+                Toast.makeText(getContext(),"Please select Payment Type",Toast.LENGTH_SHORT).show();
+            }
+
         });
 
     }
@@ -178,13 +193,16 @@ public class CheckoutDialogFragment extends DialogFragment {
 
     public void makeSale(List<Product> productList, User user, Client client){
 
+        Timber.tag(TAG).d("Shift ID at create sale: %s", shiftId);
+
         Timestamp timestamp = Timestamp.now();
 
         sale = new Sale(String.valueOf(UUID.randomUUID()),
                     user.getUid(),
                     user.getFirstName() + " " + user.getSecondName(),
+                    shiftId,
                     client!=null ? client.getUid() : "",
-                    client!=null ? "PrePaid" : "WalkInClient",
+                    selectedClientType,
                     client!=null ? client.getName() : "",
                     user.getStationId(),
                     user.getStationName(),
