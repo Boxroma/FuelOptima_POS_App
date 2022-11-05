@@ -76,7 +76,7 @@ public class FireStoreRepository {
                         products.add(
                                 new Product(
                                         doc.getId(),
-                                        doc.getString("name"),
+                                        doc. getString("name"),
                                         doc.getString("description"),
                                         doc.getDouble("price") != null ? doc.getDouble("price") : 0.0,
                                         doc.getString("type"),

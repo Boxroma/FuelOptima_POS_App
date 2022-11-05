@@ -31,7 +31,6 @@ import java.util.UUID;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentCheckoutDialogBinding;
-import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.ClientSpinnerAdapter;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.MakeSaleDialogListener;
 import io.grindallday.endrone_mobile_app.model.Client;

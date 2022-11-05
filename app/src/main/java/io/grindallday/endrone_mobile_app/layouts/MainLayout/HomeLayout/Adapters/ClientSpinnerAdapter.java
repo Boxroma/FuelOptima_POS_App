@@ -1,7 +1,6 @@
 package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -9,8 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.List;
 
 import io.grindallday.endrone_mobile_app.model.Client;
 
@@ -44,7 +41,6 @@ public class ClientSpinnerAdapter extends ArrayAdapter<Client> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView label = (TextView) super.getView(position, convertView, parent);
-        label.setTextColor(Color.BLACK);
         label.setText(clients[position].getName());
         return label;
     }
@@ -52,7 +48,6 @@ public class ClientSpinnerAdapter extends ArrayAdapter<Client> {
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView label = (TextView) super.getDropDownView(position, convertView, parent);
-        label.setTextColor(Color.BLACK);
         label.setText(clients[position].getName());
         return label;
     }

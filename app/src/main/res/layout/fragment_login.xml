@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_overlay"
+    android:background="#66FFFFFF"
     tools:context=".layouts.StartShiftLayout.StartShiftFragment">
 
     <ProgressBar
@@ -20,45 +20,56 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/company_logo"
-        android:src="@drawable/ic_launcher_foreground"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        android:src="@drawable/endrone_logo"
+        app:layout_constraintBottom_toTopOf="@+id/view_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/et_email"
+    <LinearLayout
+        android:id="@+id/view_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints="Email"
-        android:hint="@string/emailTextHint"
-        android:inputType="textEmailAddress"
-        android:textAlignment="center"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        tools:ignore="LabelFor" />
+        app:layout_constraintBottom_toTopOf="@+id/button">
 
-    <EditText
-        android:id="@+id/et_pass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints="password"
-        android:hint="@string/etPasswordHint"
-        android:inputType="textPassword"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_email"
-        tools:ignore="LabelFor" />
+        <EditText
+            android:id="@+id/et_email"
+            style="@style/NumberPicker.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:autofillHints="Email"
+            android:hint="@string/emailTextHint"
+            android:inputType="textEmailAddress"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+        <EditText
+            android:id="@+id/et_pass"
+            style="@style/NumberPicker.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            android:autofillHints="password"
+            android:hint="@string/etPasswordHint"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            tools:ignore="LabelFor" />
+
+    </LinearLayout>
+
+
 
 
 
@@ -70,6 +81,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        style="@style/Widget.MaterialComponents.Button"
+        app:layout_constraintTop_toBottomOf="@+id/view_edit_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

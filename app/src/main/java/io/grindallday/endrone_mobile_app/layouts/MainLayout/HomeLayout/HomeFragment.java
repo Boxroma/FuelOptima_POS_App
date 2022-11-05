@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
         homeViewModel.getClientList().observe(getViewLifecycleOwner(), clientList1 -> {
             if (clientList1!=null){
                 clientList = clientList1;
-                Timber.tag(TAG).d("Client List Updated");
+                Timber.tag(TAG).d("Client Count : %s",clientList.size());
             }
         });
 

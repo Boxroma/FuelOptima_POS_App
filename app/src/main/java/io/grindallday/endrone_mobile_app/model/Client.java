@@ -1,5 +1,7 @@
 package io.grindallday.endrone_mobile_app.model;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.Timestamp;
 
 public class Client {
@@ -78,5 +80,11 @@ public class Client {
 
     public void setCurrentBalance(Double currentBalance) {
         this.currentBalance = currentBalance;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getName();
     }
 }

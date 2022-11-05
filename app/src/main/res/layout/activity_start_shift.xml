@@ -4,7 +4,7 @@
     android:id="@+id/frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/fullscreenBackgroundColor"
+    android:background="@color/white"
     android:theme="@style/ThemeOverlay.Endrone_Mobile_App.FullscreenContainer"
     tools:context=".layouts.StartShiftLayout.StartShiftActivity">
 
