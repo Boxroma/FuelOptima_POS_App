@@ -24,6 +24,7 @@ import timber.log.Timber;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
+    private static final String TAG = "Product Adapter";
     private final Context context;
     private final List<Product> productList;
     private final HomeFragment homeFragment;
@@ -51,7 +52,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).d("Kerosene Item Selected");
                 homeFragment.showProductSaleDialog(product);
             }
         });

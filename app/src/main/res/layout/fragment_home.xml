@@ -7,8 +7,6 @@
     android:background="@color/white"
     tools:context=".layouts.MainLayout.HomeLayout.HomeFragment">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +42,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/text_main"
                 android:textAlignment="center"
-                android:text="Fuel Types" />
+                android:text="Fuel Products" />
 
             <View
                 android:id="@+id/line2"
@@ -64,11 +62,14 @@
             android:layout_marginTop="18dp"
             android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_petrol_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/teal_200"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/teal_200"
+                android:elevation="3dp"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="8dp"
@@ -88,8 +89,8 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_main"
                         android:layout_gravity="center"
-                        android:textFontWeight="700"
-                        android:text="Petrol"/>
+                        android:textStyle="bold"
+                        android:text="PETROL"/>
 
                     <TextView
                         android:id="@+id/tv_fuel_price_p"
@@ -98,18 +99,22 @@
                         android:textColor="@color/text_main"
                         android:layout_marginBottom="4dp"
                         android:layout_gravity="center"
+                        android:textStyle="bold"
                         android:text="ZMK 21.00"/>
 
                 </LinearLayout>
 
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_diesel_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/teal_200"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/teal_200"
+                android:elevation="3dp"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="8dp"
@@ -128,8 +133,8 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_main"
                         android:layout_gravity="center"
-                        android:textFontWeight="700"
-                        android:text="Diesel"/>
+                        android:textStyle="bold"
+                        android:text="DIESEL"/>
 
                     <TextView
                         android:id="@+id/tv_fuel_price_d"
@@ -138,19 +143,23 @@
                         android:textColor="@color/text_main"
                         android:layout_marginBottom="4dp"
                         android:layout_gravity="center"
+                        android:textStyle="bold"
                         android:text="ZMK 21.00"/>
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_kerosene_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/teal_200"
+                android:elevation="3dp"
                 android:layout_weight="1"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="@color/teal_200"
                 app:cardCornerRadius="8dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
@@ -167,8 +176,8 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_main"
                         android:layout_gravity="center"
-                        android:textFontWeight="700"
-                        android:text="Kerosene"/>
+                        android:textStyle="bold"
+                        android:text="KEROSENE"/>
 
                     <TextView
                         android:id="@+id/tv_fuel_price_k"
@@ -177,11 +186,12 @@
                         android:textColor="@color/text_main"
                         android:layout_marginBottom="4dp"
                         android:layout_gravity="center"
+                        android:textStyle="bold"
                         android:text="ZMK 21.00"/>
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
@@ -245,6 +255,5 @@
         android:text="No Items Added"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

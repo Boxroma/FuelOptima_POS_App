@@ -1,20 +1,16 @@
-package io.grindallday.endrone_mobile_app.layouts.MainLayout;
+package io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.Timestamp;
 
-import java.time.Instant;
 import java.util.Date;
 
-import io.grindallday.endrone_mobile_app.layouts.EndShiftLayout.EndShiftActivity;
-import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.EndShiftDialogListener;
 
 public class EndShiftDialog extends DialogFragment {

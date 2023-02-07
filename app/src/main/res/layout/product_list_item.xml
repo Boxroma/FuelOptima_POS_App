@@ -3,54 +3,56 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/materialCardView"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="240dp"
+    android:layout_width="160dp"
     android:layout_height="80dp"
-    app:cardBackgroundColor="@color/teal_200"
+    app:cardBackgroundColor="@color/white"
     android:layout_marginBottom="6dp"
-    android:layout_margin="4dp"
+    android:layout_margin="2dp"
     android:elevation="3dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
+    app:strokeWidth="2dp"
+    app:strokeColor="@color/teal_200"
     app:cardCornerRadius="6dp"
     android:focusable="true">
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="7"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/tv_product_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Product Name"
             android:textAlignment="textStart"
+            android:textStyle="bold"
             android:textSize="18sp"
+            android:maxLines="1"
             android:textColor="@android:color/secondary_text_light" />
         <TextView
             android:id="@+id/tv_description"
-            android:layout_width="100sp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
             android:textAlignment="textStart"
             android:textSize="12sp"
+            android:maxLines="1"
             android:textColor="@android:color/secondary_text_light" />
         <TextView
             android:id="@+id/tv_price"
-            android:layout_width="100sp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ZMK 0.00"
             android:textAlignment="textStart"
-            android:textFontWeight="700"
+            android:textStyle="bold"
             android:textSize="12sp"
+            android:maxLines="1"
             android:textColor="@android:color/secondary_text_light" />
 
-
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

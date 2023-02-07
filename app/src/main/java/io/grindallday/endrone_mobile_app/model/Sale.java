@@ -10,6 +10,7 @@ public class Sale {
     private String attendant_id;
     private String attendantName;
     private String shift_id;
+    private String shiftStaffId;
     private String clientId;
     private String clientType;
     private String clientName;
@@ -23,6 +24,7 @@ public class Sale {
                 String attendantId,
                 String attendantName,
                 String shift_id,
+                String shiftStaffId,
                 String clientId,
                 String clientType,
                 String clientName,
@@ -35,6 +37,7 @@ public class Sale {
         this.attendant_id = attendantId;
         this.attendantName = attendantName;
         this.shift_id = shift_id;
+        this.shiftStaffId = shiftStaffId;
         this.clientId = clientId;
         this.clientType = clientType;
         this.clientName = clientName;
@@ -144,5 +147,11 @@ public class Sale {
     }
 
 
+    public String getShiftStaffId() {
+        return shiftStaffId;
+    }
 
+    public void setShiftStaffId(String shiftStaffId) {
+        this.shiftStaffId = shiftStaffId;
+    }
 }

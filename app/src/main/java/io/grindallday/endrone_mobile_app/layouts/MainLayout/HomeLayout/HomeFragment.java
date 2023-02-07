@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,28 +18,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.databinding.FragmentHomeBinding;
-import io.grindallday.endrone_mobile_app.layouts.EndShiftLayout.EndShiftActivity;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.ProductAdapter;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.CheckoutDialogFragment;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.DisplayCartDialogFragment;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.FuelSaleDialogFragment;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.ProductSaleDialogFragment;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
-import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.EndShiftDialogListener;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.MakeSaleDialogListener;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.RemoveProductDialogListener;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.ShowCheckoutDialogListener;
@@ -48,6 +40,7 @@ import io.grindallday.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActi
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
+import io.grindallday.endrone_mobile_app.model.Pump;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.Shift;
 import io.grindallday.endrone_mobile_app.model.Station;
@@ -56,22 +49,26 @@ import io.grindallday.endrone_mobile_app.utils.PrintThread;
 import timber.log.Timber;
 
 public class HomeFragment extends Fragment implements AddProductDialogListener,
-        RemoveProductDialogListener, ShowCheckoutDialogListener, MakeSaleDialogListener, EndShiftDialogListener {
+        RemoveProductDialogListener, ShowCheckoutDialogListener, MakeSaleDialogListener {
 
     private static final String TAG = "HomeFragment";
     private FirebaseAuth mAuth;
-    private FirebaseFirestore firebaseFirestore;
     public RecyclerView recyclerView;
     private FragmentHomeBinding binding;
     private HomeViewModel homeViewModel;
     private ProductAdapter productAdapter;
     private List<Product> products;
     private ArrayList<Product> cartList;
+    private List<Pump> pumpList;
     private List<Client> clientList;
-    private List<Sale> saleList;
+    private List<Sale> saleList = new ArrayList<>();
     private User currentUser;
+    private Shift currentShift;
     private Station currentStation;
     private Product petrolObject, dieselObject, keroseneObject;
+    private boolean shiftSync = false;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
 
     public HomeFragment newInstance() {
@@ -84,7 +81,11 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+        //initialize shared preference
+        sharedPref = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         if(firebaseUser == null){
             //reload();
@@ -116,6 +117,8 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
         binding = FragmentHomeBinding.inflate(inflater,container, false);
         View view = binding.getRoot();
 
+        shiftSync = false;
+
         recyclerView = binding.recyclerView;
 
         return view;
@@ -145,7 +148,6 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
                         break;
                 }
             }
-
         }
     }
 
@@ -153,15 +155,12 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Some Dumb Stuff
-
     }
 
     public void setUi(){
 
         productAdapter = new ProductAdapter(getContext(),HomeFragment.this);
-
-        int noOfColumns = calculateNoOfColumns(requireContext(), 260);
-
+        int noOfColumns = calculateNoOfColumns(requireContext(), 160);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), noOfColumns));
         recyclerView.setAdapter(productAdapter);
 
@@ -181,6 +180,8 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
             if (station != null){
                 currentStation = station;
                 Timber.tag(TAG).d("Station Info: %s", currentStation.getName());
+                editor.putString("shiftId", station.getShiftId());
+                editor.apply();
             }
         });
 
@@ -212,58 +213,45 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
         homeViewModel.getSaleList().observe(getViewLifecycleOwner(), sales -> {
             if (sales!=null){
                 saleList = sales;
-                updateTotal();
                 Timber.tag(TAG).d("Sales List Updated");
-                setDrawerValues();
+            }
+        });
+
+        homeViewModel.getPumps().observe(getViewLifecycleOwner(), pumps -> {
+            if (pumps!=null){
+                pumpList = pumps;
             }
         });
 
         binding.shoppingCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Cart Button Pressed", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), "Cart Button Pressed", Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).d("Cart Button Pressed");
                 showCurrentCartDialog(homeViewModel.cartItems.getValue());
             }
         });
 
         binding.cvPetrolCard.setOnClickListener(view -> {
-            Toast.makeText(getContext(), "Petrol Item Selected", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), "Petrol Item Selected", Toast.LENGTH_SHORT).show();
+            Timber.tag(TAG).d("Petrol Item Selected");
             showFuelSaleDialog(petrolObject);
         });
 
         binding.cvDieselCard.setOnClickListener(view -> {
-            Toast.makeText(getContext(), "Diesel Item Selected", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), "Diesel Item Selected", Toast.LENGTH_SHORT).show();
+            Timber.tag(TAG).d("Diesel Item Selected");
             showFuelSaleDialog(dieselObject);
         });
 
         binding.cvKeroseneCard.setOnClickListener(view -> {
-            Toast.makeText(getContext(), "Kerosene Item Selected", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), "Kerosene Item Selected", Toast.LENGTH_SHORT).show();
+            Timber.tag(TAG).d("Kerosene Item Selected");
             showFuelSaleDialog(keroseneObject);
         });
-
-        updateShiftInfo();
-
     }
 
     @SuppressLint("DefaultLocale")
-    private void updateTotal() {
-
-        Timber.tag(TAG).d("Update Shift called");
-
-        double total = 0.0;
-        if (saleList!=null){
-            for(Sale sale : saleList){
-                total = total + sale.getTotal();
-            }
-        }
-
-        ((HomeActivity) requireActivity()).setToolbarText(String.format("ZMW %,.2f",total));
-    }
-
-    public void setDrawerValues(){
-        ((HomeActivity) requireActivity()).setNavigationDrawer(currentUser,saleList);
-    }
-
     public void setCartButtonUI(List<Product> productList){
 
         double total = 0.0;
@@ -272,7 +260,7 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
                 total = total + (product.getPrice() * product.getQuantity());
             }
         }
-        binding.shoppingCartButton.setText(String.format("Cart Total: %s",total));
+        binding.shoppingCartButton.setText(String.format("Cart Total: %,.2f", total));
     }
 
     public void removeProduct(Product product){
@@ -351,25 +339,29 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
 
     }
 
-    @Override
-    public void onEndShift(Timestamp timestamp) {
-
-    }
-
-    public void updateShiftInfo(){
-        Timber.tag(TAG).d("Update Shift Info Called");
-        ((HomeActivity)requireActivity()).updateShiftInfo(null,true);
-        //homeViewModel.updateShift(null, true);
-    }
-
-
     public void printReceipt(Sale sale, User user){
-        PrintThread printThread = new PrintThread(requireContext(),sale, user);
+        Sale reciptSaleItem = new Sale(
+                sale.getUid(),
+                sale.getAttendant_id(),
+                sale.getAttendantName(),
+                sale.getShift_id(),
+                sale.getShiftStaffId(),
+                sale.getClientId(),
+                sale.getClientType(),
+                sale.getClientName(),
+                sale.getStation_id(),
+                sale.getStationName(),
+                sale.getTime(),
+                sale.getTotal(),
+                sale.getProductList()
+        );
+
+        PrintThread printThread = new PrintThread(requireContext(), reciptSaleItem, user, reciptSaleItem.getProductList(), currentStation);
         printThread.start();
     }
 
     public void showFuelSaleDialog(Product product) {
-        FuelSaleDialogFragment dialogFragment = FuelSaleDialogFragment.newInstance(product,currentStation);
+        FuelSaleDialogFragment dialogFragment = FuelSaleDialogFragment.newInstance(product,currentStation,pumpList);
         dialogFragment.setListener(this);
         dialogFragment.show(getParentFragmentManager(),"ADD FUEL SELL DIALOG");
     }
@@ -393,11 +385,9 @@ public class HomeFragment extends Fragment implements AddProductDialogListener,
         dialogFragment.show(getParentFragmentManager(),"DISPLAY CHECKOUT DIALOG");
     }
 
-    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
+    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example column Width dp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = (displayMetrics.widthPixels / displayMetrics.density);
-        int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
-        return noOfColumns;
+        return (int) (screenWidthDp / columnWidthDp);
     }
-
 }

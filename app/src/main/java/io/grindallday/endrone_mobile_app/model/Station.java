@@ -2,31 +2,50 @@ package io.grindallday.endrone_mobile_app.model;
 
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
+
 public class Station {
+
+    private String id;
+    private String name;
     private String address;
     private Timestamp created;
-    private String dieselTankSize;
-    private String petrolTankSize;
-    private String keroseneTankSize;
-    private String noDieselPumps;
-    private String noPetrolPumps;
-    private String noKerosenePumps;
-    private String name;
+    private String shiftId;
+    private Double dieselTankSize;
+    private Double petrolTankSize;
+    private Double keroseneTankSize;
+    private ArrayList<String> dieselPumpIds;
+    private ArrayList<String> petrolPumpIds;
+    private ArrayList<String> kerosenePumpIds;
 
-    public Station(String address, Timestamp created, String dieselTankSize, String petrolTankSize, String keroseneTankSize, String noDieselPumps, String noPetrolPumps, String noKerosenePumps, String name) {
+    public Station(String address, Timestamp created, Double dieselTankSize, Double petrolTankSize, Double keroseneTankSize, ArrayList<String> dieselPumps, ArrayList<String> petrolPumps, ArrayList<String> kerosenePumps, String name) {
         this.address = address;
         this.created = created;
         this.dieselTankSize = dieselTankSize;
         this.petrolTankSize = petrolTankSize;
         this.keroseneTankSize = keroseneTankSize;
-        this.noDieselPumps = noDieselPumps;
-        this.noPetrolPumps = noPetrolPumps;
-        this.noKerosenePumps = noKerosenePumps;
+        this.dieselPumpIds = dieselPumps;
+        this.petrolPumpIds = petrolPumps;
+        this.kerosenePumpIds = kerosenePumps;
         this.name = name;
     }
 
     public Station() {
 
+    }
+
+    public Station(String id, String address, Timestamp created,String shiftId, Double dieselTankSize, Double petrolTankSize, Double keroseneTankSize, Object dieselPumps, Object petrolPumps, Object kerosenePumps, String name) {
+        this.id = id;
+        this.address = address;
+        this.created = created;
+        this.shiftId = shiftId;
+        this.dieselTankSize = dieselTankSize;
+        this.petrolTankSize = petrolTankSize;
+        this.keroseneTankSize = keroseneTankSize;
+        this.dieselPumpIds = (ArrayList<String>) dieselPumps;
+        this.petrolPumpIds = (ArrayList<String>) petrolPumps;
+        this.kerosenePumpIds = (ArrayList<String>) kerosenePumps;
+        this.name = name;
     }
 
     public String getAddress() {
@@ -45,52 +64,52 @@ public class Station {
         this.created = created;
     }
 
-    public String getDieselTankSize() {
+    public Double getDieselTankSize() {
         return dieselTankSize;
     }
 
-    public void setDieselTankSize(String dieselTankSize) {
+    public void setDieselTankSize(Double dieselTankSize) {
         this.dieselTankSize = dieselTankSize;
     }
 
-    public String getPetrolTankSize() {
+    public Double getPetrolTankSize() {
         return petrolTankSize;
     }
 
-    public void setPetrolTankSize(String petrolTankSize) {
+    public void setPetrolTankSize(Double petrolTankSize) {
         this.petrolTankSize = petrolTankSize;
     }
 
-    public String getKeroseneTankSize() {
+    public Double getKeroseneTankSize() {
         return keroseneTankSize;
     }
 
-    public void setKeroseneTankSize(String keroseneTankSize) {
+    public void setKeroseneTankSize(Double keroseneTankSize) {
         this.keroseneTankSize = keroseneTankSize;
     }
 
-    public String getNoDieselPumps() {
-        return noDieselPumps;
+    public ArrayList<String> getDieselPumpIds() {
+        return dieselPumpIds;
     }
 
-    public void setNoDieselPumps(String noDieselPumps) {
-        this.noDieselPumps = noDieselPumps;
+    public void setDieselPumpIds(ArrayList<String> dieselPumpIds) {
+        this.dieselPumpIds = dieselPumpIds;
     }
 
-    public String getNoPetrolPumps() {
-        return noPetrolPumps;
+    public ArrayList<String> getPetrolPumpIds() {
+        return petrolPumpIds;
     }
 
-    public void setNoPetrolPumps(String noPetrolPumps) {
-        this.noPetrolPumps = noPetrolPumps;
+    public void setPetrolPumpIds(ArrayList<String> petrolPumpIds) {
+        this.petrolPumpIds = petrolPumpIds;
     }
 
-    public String getNoKerosenePumps() {
-        return noKerosenePumps;
+    public ArrayList<String> getKerosenePumpIds() {
+        return kerosenePumpIds;
     }
 
-    public void setNoKerosenePumps(String noKerosenePumps) {
-        this.noKerosenePumps = noKerosenePumps;
+    public void setKerosenePumpIds(ArrayList<String> kerosenePumpIds) {
+        this.kerosenePumpIds = kerosenePumpIds;
     }
 
     public String getName() {
@@ -101,6 +120,7 @@ public class Station {
         this.name = name;
     }
 
-
-
+    public String getShiftId() {
+        return shiftId;
+    }
 }

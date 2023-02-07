@@ -12,23 +12,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Endrone_Mobile_App"
-        android:name=".ApplicationController"
+        android:name="io.grindallday.endrone_mobile_app.ApplicationController"
         tools:targetApi="31">
         <activity
-            android:name=".layouts.EndShiftLayout.EndShiftActivity"
+            android:name="io.grindallday.endrone_mobile_app.layouts.EndShiftLayout.EndShiftActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"/>
+            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name=".layouts.StartShiftLayout.StartShiftActivity"
+            android:name="io.grindallday.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"/>
+            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name=".layouts.MainLayout.HomeActivity"
+            android:name="io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen">
+            android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -49,12 +49,11 @@ public class CheckoutDialogFragment extends DialogFragment {
     private static Client activeClient;
     private static User user;
     private static String shiftId;
+    private static String shiftStaffId;
     private static String selectedClientType;
-    private static Sale sale;
     private static double saleTotal;
     MakeSaleDialogListener makeSaleDialogListener;
     DialogFragmentCheckoutDialogBinding binding;
-    Context context;
     private ClientSpinnerAdapter adapter;
 
     public CheckoutDialogFragment() {
@@ -66,6 +65,7 @@ public class CheckoutDialogFragment extends DialogFragment {
         CheckoutDialogFragment.clientList = clientList;
         CheckoutDialogFragment.user = user;
         CheckoutDialogFragment.shiftId = sharedPref.getString("shiftId","");
+        CheckoutDialogFragment.shiftStaffId = sharedPref.getString("shiftStaffId","");
         return new CheckoutDialogFragment();
     }
 
@@ -86,6 +86,8 @@ public class CheckoutDialogFragment extends DialogFragment {
         dialog.setContentView(view);
 
         setUi();
+
+        activeClient = null;
 
         return dialog;
     }
@@ -134,7 +136,8 @@ public class CheckoutDialogFragment extends DialogFragment {
         binding.spClientType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(requireContext(),"Selected Type: " + clientTypes[i], Toast.LENGTH_SHORT).show();
+                // Toast.makeText(requireContext(),"Selected Type: " + clientTypes[i], Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).d("Selected Type: %s", clientTypes[i] );
                 if(i == 0 || i == 1){
                     binding.llSelectClient.setVisibility(View.INVISIBLE);
                 }else {
@@ -146,7 +149,7 @@ public class CheckoutDialogFragment extends DialogFragment {
         });
 
         //Set Client Spinner
-        adapter = new ClientSpinnerAdapter(requireContext(), android.R.layout.simple_spinner_item,clientList.toArray(new Client[0]));
+        adapter = new ClientSpinnerAdapter(requireContext(), R.layout.list_item,clientList.toArray(new Client[0]));
         binding.spClient.setAdapter(adapter);
 
         binding.spClient.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +159,8 @@ public class CheckoutDialogFragment extends DialogFragment {
                 //Set Active Client
                 activeClient = adapter.getItem(i);
                 if(activeClient!=null) {
-                    Toast.makeText(getContext(), "Current Client Selected: " + activeClient.getName(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getContext(), "Current Client Selected: " + activeClient.getName(), Toast.LENGTH_SHORT).show();
+                    Timber.tag(TAG).d("Current Client Selected: %s", activeClient.getName());
                 }
             }
         });
@@ -170,7 +174,6 @@ public class CheckoutDialogFragment extends DialogFragment {
             else {
                 Toast.makeText(getContext(),"Please select Payment Type",Toast.LENGTH_SHORT).show();
             }
-
         });
 
     }
@@ -196,19 +199,20 @@ public class CheckoutDialogFragment extends DialogFragment {
 
         Timestamp timestamp = Timestamp.now();
 
-        sale = new Sale(String.valueOf(UUID.randomUUID()),
-                    user.getUid(),
-                    user.getFirstName() + " " + user.getSecondName(),
-                    shiftId,
-                    client!=null ? client.getUid() : "",
-                    selectedClientType,
-                    client!=null ? client.getName() : "",
-                    user.getStationId(),
-                    user.getStationName(),
-                    timestamp,
-                    saleTotal,
-                    productList
-            );
+        Sale sale = new Sale(String.valueOf(UUID.randomUUID()),
+                user.getUid(),
+                user.getFirstName() + " " + user.getSecondName(),
+                shiftId,
+                shiftStaffId,
+                client != null ? client.getUid() : "",
+                selectedClientType,
+                client != null ? client.getName() : "",
+                user.getStationId(),
+                user.getStationName(),
+                timestamp,
+                saleTotal,
+                productList
+        );
 
         //Make Sale Call
         makeSaleDialogListener.onMakeSale(sale, binding.cbPrint.isChecked());

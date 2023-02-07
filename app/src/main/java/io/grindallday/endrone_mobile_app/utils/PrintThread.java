@@ -8,19 +8,25 @@ import android.widget.Toast;
 
 import com.ctk.sdk.PosApiHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.model.Product;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.Station;
 import io.grindallday.endrone_mobile_app.model.User;
+import timber.log.Timber;
 
 public class PrintThread extends Thread {
     private static final String TAG = "PrintThread";
     private boolean printThreadFinished = true;
     private int BatteryV;
-    private Context context;
+    private final Context context;
     private Sale sale;
-    private User user;
+    private List<Product> productList;
+    private Station currentStation;
+    private final User user;
     PosApiHelper posApiHelper = PosApiHelper.getInstance();
     int ret = 4;
     private int RESULT_CODE = 0;
@@ -29,10 +35,12 @@ public class PrintThread extends Thread {
         return printThreadFinished;
     }
 
-    public PrintThread(Context context, Sale sale, User user){
+    public PrintThread(Context context, Sale sale, User user, List<Product> productList, Station currentStation){
         this.context = context;
         this.sale = sale;
         this.user = user;
+        this.productList = new ArrayList<>(productList);
+        this.currentStation = currentStation;
     }
 
     private int getValue() {
@@ -73,8 +81,9 @@ public class PrintThread extends Thread {
             posApiHelper.PrintStr("Endrone Petroleum");
             posApiHelper.PrintStr("Corporation LTD");
             posApiHelper.PrintStr("\n");
-            posApiHelper.PrintStr(String.format("Station: %s", user.getStationName()));
-            posApiHelper.PrintStr(String.format("Address: %s", user.getStationAddress()));
+            posApiHelper.PrintStr(String.format("Station: %s", currentStation.getName()));
+            posApiHelper.PrintStr(String.format("Address: %s", currentStation.getAddress()));
+            posApiHelper.PrintStr("TPIN: ");
             posApiHelper.PrintStr("\n");
             posApiHelper.PrintStr(String.format("Attendant Name: %s %s", user.getFirstName(), user.getSecondName()));
 //            posApiHelper.PrintStr(String.format("Attendant ID: %s", user.getUid()));
@@ -88,8 +97,9 @@ public class PrintThread extends Thread {
             posApiHelper.PrintStr("Item      Price    Quant   Total");
             posApiHelper.PrintStr("================================");
             // For loop
-            for(Product product : sale.getProductList()){
-                Log.d(TAG,"print product: " + product.getQuantity());
+            Timber.tag(TAG).d("print product size: %s ", sale.getProductList().size());
+            for(Product product : productList){
+                Timber.tag(TAG).d("print product: %s ", product.getName());
                 posApiHelper.PrintStr(String.format("%s %,.2f %,.2f %,.2f",product.getName(),product.getPrice(),product.getQuantity(),(product.getQuantity() * product.getPrice())));
             }
             posApiHelper.PrintStr("================================");

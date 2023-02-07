@@ -6,11 +6,9 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -126,7 +124,8 @@ public class ProductSaleDialogFragment extends DialogFragment {
             });
 
             binding.btAdd.setOnClickListener(view -> {
-                Toast.makeText(getContext(),"Add button Pressed",Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(),"Add button Pressed",Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).d("Add button Pressed");
                 // Over Engineered to avoid the static reference from the active Product object
                 Product product = new Product(
                         activeProduct.getProduct_id(),

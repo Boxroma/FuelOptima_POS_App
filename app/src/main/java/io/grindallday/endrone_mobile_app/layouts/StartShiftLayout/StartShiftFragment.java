@@ -1,11 +1,12 @@
 package io.grindallday.endrone_mobile_app.layouts.StartShiftLayout;
 
+import static com.google.firebase.firestore.Query.Direction.DESCENDING;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,40 +15,47 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.type.DateTime;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
-import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentLoginBinding;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity;
 import io.grindallday.endrone_mobile_app.model.Shift;
+import io.grindallday.endrone_mobile_app.model.ShiftStaff;
 import io.grindallday.endrone_mobile_app.model.User;
 import timber.log.Timber;
 
 public class StartShiftFragment extends Fragment {
 
+    private final String TAG = "LoginFragment";
+    SharedPreferences.Editor editor;
     private FragmentLoginBinding binding;
     private FirebaseAuth mAuth;
     private SharedPreferences sharedPref;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firebaseFirestore;
-    private final String TAG = "LoginFragment";
     private User currentUser = new User();
-    SharedPreferences.Editor editor;
+    private final Shift lastShift = null;
+    private String shiftId;
 
     public StartShiftFragment() {
         // Required empty public constructor
@@ -68,7 +76,7 @@ public class StartShiftFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         //initialize shared preference
-        sharedPref = requireActivity().getSharedPreferences("pref",Context.MODE_PRIVATE);
+        sharedPref = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
     }
@@ -77,10 +85,9 @@ public class StartShiftFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentLoginBinding.inflate(inflater,container,false);
-        View view = binding.getRoot();
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -88,10 +95,13 @@ public class StartShiftFragment extends Fragment {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        if (currentUser != null) {
             //reload();
-            NavHostFragment.findNavController(StartShiftFragment.this).navigate(R.id.homeFragment);
+            //Toast.makeText(getContext(),"User Already Logged In", Toast.LENGTH_SHORT).show();
+            //NavHostFragment.findNavController(StartShiftFragment.this).navigate(R.id.homeFragment);
+            startHomeActivity();
         }
+        firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -167,7 +177,7 @@ public class StartShiftFragment extends Fragment {
 
                             //Set user id for future use
                             firebaseUser = mAuth.getCurrentUser();
-                            if (firebaseUser != null){
+                            if (firebaseUser != null) {
                                 Timber.tag(TAG).d(" User Id has been set: %s", firebaseUser.getUid());
                                 getUser(firebaseUser.getUid());
 
@@ -178,13 +188,14 @@ public class StartShiftFragment extends Fragment {
                             Timber.tag(TAG).w(task.getException(), "signInWithEmail:failure");
                             Toast.makeText(getContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            hideProgressBar();
                         }
 
                         if (!task.isSuccessful()) {
                             Toast.makeText(getContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-                        hideProgressBar();
+                        // hideProgressBar();
                     }
                 });
     }
@@ -193,23 +204,27 @@ public class StartShiftFragment extends Fragment {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.etPass.setEnabled(false);
         binding.etEmail.setEnabled(false);
+        binding.button.setEnabled(false);
     }
 
     public void hideProgressBar() {
         binding.progressBar.setVisibility(View.INVISIBLE);
         binding.etPass.setEnabled(true);
         binding.etEmail.setEnabled(true);
+        binding.button.setEnabled(true);
     }
 
-    public void setUserVariables(User user){
+    public void setUserVariables(User user) {
         Date date = new Date(System.currentTimeMillis());
 
+
         Timber.tag(TAG).d("Retrieved user details: \n\tUser Id: %s \n\tStation Id: %s", user.getUid(), user.getStationId());
+
         //Set Preference
-        editor.putString("clientId", user.getUid());
+        editor.putString("userId", user.getUid());
+        editor.putString("userName", String.format("%s %s", user.getFirstName(), user.getSecondName()));
         editor.putString("stationId", user.getStationId());
         editor.putLong("loginMills", date.getTime());
-        editor.putString("shiftId", UUID.randomUUID().toString());
         editor.apply();
     }
 
@@ -218,17 +233,15 @@ public class StartShiftFragment extends Fragment {
         startActivity(intent);
     }
 
-    public void getUser(String userId){
-        firebaseFirestore = FirebaseFirestore.getInstance();
+    public void getUser(String userId) {
         DocumentReference documentReference = firebaseFirestore.collection("users").document(userId);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
                 User user = new User();
                 if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
-                    if (documentSnapshot.exists()){
+                    if (documentSnapshot.exists()) {
                         Timber.tag(TAG).d("DocumentSnapshot data: %s", documentSnapshot.getData());
                         user = new User(
                                 documentSnapshot.getString("uid"),
@@ -243,17 +256,161 @@ public class StartShiftFragment extends Fragment {
                                 documentSnapshot.getString("role"));
 
                         setUserVariables(user);
-                        startHomeActivity();
+                        // getShiftData(user.getStationId());
+                        getShiftInfo();
+
                     } else {
                         Timber.tag(TAG).d("No such document");
+                        mAuth.signOut();
+                        hideProgressBar();
                     }
-
                     currentUser = user;
                 } else {
                     Timber.tag(TAG).d(task.getException(), "get failed with ");
+                    mAuth.signOut();
+                    hideProgressBar();
                 }
-
             }
         });
+    }
+
+    public void getShiftInfo() {
+        CollectionReference collectionReference = firebaseFirestore.collection("shifts");
+        Query query = collectionReference.whereEqualTo("stationId", sharedPref.getString("stationId", "")).orderBy("start", DESCENDING).limit(1);
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<Shift> shifts = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Timber.tag(TAG).d("Shift Data => %s", document.getData());
+                    Timber.tag(TAG).d("Shift ID => %s", document.getId());
+                    Timber.tag(TAG).d("Shift Status => %s", document.getString("status"));
+                    shifts.add(new Shift(
+                            document.getId(),
+                            document.getString("name"),
+                            document.getTimestamp("start"),
+                            document.getTimestamp("stop"),
+                            document.getString("stationId"),
+                            document.getString("status")
+                    ));
+                }
+                if (Objects.equals(shifts.get(0).getStatus(), "active")) {
+                    Timber.tag(TAG).d("Returned Shift ID: %s", shifts.get(0).getId());
+                    editor.putString("shiftId", shifts.get(0).getId());
+                    editor.apply();
+                    // hideProgressBar();
+                    Toast.makeText(getContext(), "Active shift found", Toast.LENGTH_SHORT).show();
+                    // mAuth.signOut();
+                    // startHomeActivity();
+                    checkStaffList();
+                } else {
+                    mAuth.signOut();
+                    hideProgressBar();
+                    Toast.makeText(getContext(), "No active shift", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Timber.tag(TAG).d(task.getException(), "Failed to get shift");
+                mAuth.signOut();
+                hideProgressBar();
+            }
+        });
+    }
+
+    /*If shift is active we check to see if the staff member already has an active shift object*/
+    public void checkStaffList() {
+        CollectionReference collectionReference = firebaseFirestore.collection("shiftStaff");
+        Query query = collectionReference.whereEqualTo("shiftId", sharedPref.getString("shiftId", ""));
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                QuerySnapshot documentSnapshot = task.getResult();
+                boolean create = true;
+                if (documentSnapshot.size() != 0) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        // Check if user already has a shift session
+                        if (Objects.equals(document.getString("userId"), sharedPref.getString("userId", ""))) {
+
+                            // Check if session has already been reconciled
+                            if (Boolean.FALSE.equals(document.getBoolean("reconciled"))){
+                                /* make shift active*/
+                                DocumentReference documentReference = firebaseFirestore.collection("shiftStaff").document(document.getId());
+
+                                documentReference.update("active", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        editor.putString("shiftStaffId", document.getId());
+                                        editor.apply();
+                                        hideProgressBar();
+                                        startHomeActivity();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getContext(), "Error Starting Shift", Toast.LENGTH_SHORT).show();
+                                        mAuth.signOut();
+                                        hideProgressBar();
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(getContext(), "Staff has already been reconciled by manager.", Toast.LENGTH_LONG).show();
+                                Timber.tag(TAG).w("Staff member has been reconciled by manager");
+                                mAuth.signOut();
+                                hideProgressBar();
+                            }
+                            create = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (create) {
+                    String shiftStaffId = UUID.randomUUID().toString();
+                    Timber.tag(TAG).d("Generated ShiftStaffID: %s", shiftStaffId);
+                    editor.putString("shiftStaffId", shiftStaffId);
+                    editor.apply();
+
+                    /*Create new shift object*/
+                    collectionReference.document(shiftStaffId).set(
+                                    new ShiftStaff(
+                                            shiftStaffId,
+                                            sharedPref.getString("shiftId", ""),
+                                            currentUser.getStationId(),
+                                            currentUser.getUid(),
+                                            currentUser.getFirstName() + " " + currentUser.getSecondName(),
+                                            new Timestamp(new Date()),
+                                            null,
+                                            true,
+                                            0.0,
+                                            0.0
+                                    )
+                            ).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Timber.tag(TAG).d("DocumentSnapshot successfully written!");
+                                    startHomeActivity();
+                                    hideProgressBar();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Timber.tag(TAG).w(e);
+                                    Toast.makeText(getContext(), "Failure Creating Staff Entry in Shift", Toast.LENGTH_SHORT).show();
+                                    mAuth.signOut();
+                                    hideProgressBar();
+                                }
+                            });
+                }
+
+            } else {
+                Toast.makeText(getContext(), "Error Reading Staff List", Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).w("Error Reading Staff List");
+                mAuth.signOut();
+                hideProgressBar();
+            }
+        });
+
     }
 }

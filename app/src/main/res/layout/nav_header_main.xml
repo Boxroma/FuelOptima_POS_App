@@ -35,6 +35,25 @@
             android:layout_height="wrap_content"
             android:text="@string/nav_header_subtitle" />
 
+        <TextView
+            android:id="@+id/tv_shift_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Shift Name: " />
+
+        <TextView
+            android:id="@+id/tv_shift_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shift Start: " />
+
+        <TextView
+            android:id="@+id/tv_shift_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shift End: " />
+
     </LinearLayout>
 
 

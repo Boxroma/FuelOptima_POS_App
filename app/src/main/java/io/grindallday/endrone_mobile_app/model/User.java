@@ -1,7 +1,5 @@
 package io.grindallday.endrone_mobile_app.model;
 
-import java.util.Date;
-
 public class User {
     private String uid;
     private String firstName;

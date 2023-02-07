@@ -15,9 +15,11 @@
         <entry key="app/src/main/res/layout/activity_end_shift.xml" value="0.19630192502532928" />
         <entry key="app/src/main/res/layout/activity_fullscreen.xml" value="0.3885416666666667" />
         <entry key="app/src/main/res/layout/activity_fullscreen2.xml" value="0.20416666666666666" />
-        <entry key="app/src/main/res/layout/activity_start_shift.xml" value="0.26766304347826086" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.30027173913043476" />
+        <entry key="app/src/main/res/layout/activity_start_shift.xml" value="0.1" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout/cart_list_item.xml" value="0.3602941176470588" />
+        <entry key="app/src/main/res/layout/client_spinner_item.xml" value="0.19513549804687502" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.40260416666666665" />
         <entry key="app/src/main/res/layout/dialog_fragment_checkout_dialog.xml" value="0.2546470310377038" />
         <entry key="app/src/main/res/layout/dialog_fragment_display_cart.xml" value="0.19630192502532928" />
@@ -30,7 +32,7 @@
         <entry key="app/src/main/res/layout/fragment_transactions.xml" value="0.38958333333333334" />
         <entry key="app/src/main/res/layout/list_item.xml" value="0.40260416666666665" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.40260416666666665" />
-        <entry key="app/src/main/res/layout/product_list_item.xml" value="0.5330947875976563" />
+        <entry key="app/src/main/res/layout/product_list_item.xml" value="0.30537719726562507" />
         <entry key="app/src/main/res/layout/spinner_item.xml" value="0.3858695652173913" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/trans_product_list_item.xml" value="0.41584975631148735" />

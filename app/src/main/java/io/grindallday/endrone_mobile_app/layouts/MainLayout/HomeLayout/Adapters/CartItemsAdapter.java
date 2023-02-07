@@ -20,6 +20,7 @@ import java.util.Objects;
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.DialogFragments.DisplayCartDialogFragment;
 import io.grindallday.endrone_mobile_app.model.Product;
+import timber.log.Timber;
 
 public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.ProductViewHolder> {
 
@@ -33,7 +34,7 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.Prod
         this.productList = productList;
         this.fragment = fragment;
         if(productList != null){
-            Log.d(TAG, String.format("Adapter received %s products",productList.size()));
+            Timber.tag(TAG).d("Adapter received %s products",productList.size());
         }
 
     }
@@ -56,15 +57,16 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.Prod
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
-                //homeFragment.showProductSaleDialog(product);
+                // Toast.makeText(context, product.getName() + " Selected ", Toast.LENGTH_SHORT).show();
+                Timber.tag(TAG).d("%s Selected ", product.getName());
             }
         });
 
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, product.getName() + " Remove", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(context, product.getName() + " Remove", Toast.LENGTH_SHORT).show();                  Timber.tag(TAG).d("%s Selected ", product.getName());
+                Timber.tag(TAG).d("%s Remove ", product.getName());
                 fragment.removeProduct(product);
             }
         });

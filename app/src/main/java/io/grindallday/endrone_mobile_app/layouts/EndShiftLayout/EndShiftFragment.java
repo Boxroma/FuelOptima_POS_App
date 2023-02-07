@@ -16,19 +16,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.FragmentEndShiftBinding;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.Adapters.TransactionAdapter;
 import io.grindallday.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActivity;
@@ -40,6 +36,7 @@ public class EndShiftFragment extends Fragment {
     private EndShiftViewModel viewModel;
     private FirebaseAuth mAuth;
     SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
     public static EndShiftFragment newInstance() {
         return new EndShiftFragment();
@@ -66,10 +63,7 @@ public class EndShiftFragment extends Fragment {
         binding = FragmentEndShiftBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-
-
         sharedPref = requireActivity().getApplication().getSharedPreferences("pref", Context.MODE_PRIVATE);
-
 
         //Logic Things
         viewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) ViewModelProvider
@@ -80,14 +74,10 @@ public class EndShiftFragment extends Fragment {
         viewModel.getSales().observe(getViewLifecycleOwner(), sales -> {
             if(sales!=null){
                 setUi(sales);
-                updateSaleHistory(sales);
             }
         });
 
         return view;
-    }
-
-    private void updateSaleHistory(List<Sale> sales) {
     }
 
     @SuppressLint("DefaultLocale")
@@ -132,6 +122,17 @@ public class EndShiftFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+    }
+
+    public void clearShiftData () {
+            /*Clear Shift Data in Shared Pref*/
+            editor.putString("shiftId", "");
+            editor.putString("shiftName", "");
+            editor.putString("shiftStart", "");
+            editor.putString("shiftStop", "");
+            editor.putString("shiftStaffId","");
+            editor.apply();
 
     }
 

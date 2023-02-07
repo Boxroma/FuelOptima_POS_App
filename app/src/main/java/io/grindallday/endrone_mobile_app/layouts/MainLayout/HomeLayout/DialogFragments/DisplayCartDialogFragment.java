@@ -29,6 +29,7 @@ import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.Adapters.
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.RemoveProductDialogListener;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.ShowCheckoutDialogListener;
 import io.grindallday.endrone_mobile_app.model.Product;
+import timber.log.Timber;
 
 public class DisplayCartDialogFragment extends DialogFragment {
 
@@ -117,7 +118,8 @@ public class DisplayCartDialogFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
 
         binding.btCheckout.setOnClickListener(view -> {
-            Toast.makeText(getContext(),"Checkout button Pressed",Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(),"Checkout button Pressed",Toast.LENGTH_SHORT).show();
+            Timber.tag(TAG).d("Checkout button Pressed");
             if(activeProductList!=null){
                 showCheckoutDialogListener.showCheckoutDialog();
             }

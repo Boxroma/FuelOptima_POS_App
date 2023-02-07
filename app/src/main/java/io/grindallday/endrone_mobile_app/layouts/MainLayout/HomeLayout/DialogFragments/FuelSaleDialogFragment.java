@@ -21,13 +21,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import io.grindallday.endrone_mobile_app.R;
 import io.grindallday.endrone_mobile_app.databinding.DialogFragmentFuelSaleBinding;
 import io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.interfaces.AddProductDialogListener;
 import io.grindallday.endrone_mobile_app.model.Product;
+import io.grindallday.endrone_mobile_app.model.Pump;
 import io.grindallday.endrone_mobile_app.model.Station;
+import timber.log.Timber;
 
 public class FuelSaleDialogFragment extends DialogFragment {
 
@@ -36,6 +39,7 @@ public class FuelSaleDialogFragment extends DialogFragment {
     public static String selected_pump;
     public static Product activeProduct = new Product();
     public static Station activeStation = new Station();
+    public static List<Pump> pumps = new ArrayList<>();
     private Double quantity;
     private Double amount;
     AddProductDialogListener mCallback;
@@ -45,9 +49,10 @@ public class FuelSaleDialogFragment extends DialogFragment {
     public FuelSaleDialogFragment() {
     }
 
-    public static FuelSaleDialogFragment newInstance(Product product, Station station){
+    public static FuelSaleDialogFragment newInstance(Product product, Station station, List<Pump> pumpList){
         activeProduct = product;
         activeStation = station;
+        pumps = pumpList;
         return new FuelSaleDialogFragment();
     }
 
@@ -224,35 +229,43 @@ public class FuelSaleDialogFragment extends DialogFragment {
     public void setDropDown(){
         ArrayList<String> pumpList = new ArrayList<>();
 
-        Log.d(TAG,"Product Name: " + activeProduct.getName());
-        Log.d(TAG,String.format("Station pump info: \n\tPetrol %s \n\tDiesel %s \n\tKerosene %s", activeStation.getNoPetrolPumps(), activeStation.getNoDieselPumps(), activeStation.getNoKerosenePumps()));
+        // Timber.tag(TAG).d(String.format("Station pump info: \n\tPetrol %s \n\tDiesel %s \n\tKerosene %s", activeStation.getPetrolPumpIds().size(), activeStation.getDieselPumpIds().size(), activeStation.getKerosenePumpIds().size()));
         switch (activeProduct.getName()){
             case "Petrol":
-                for(int i = 1; i <= Integer.parseInt(activeStation.getNoPetrolPumps()); i++){
-                    pumpList.add(String.format("Pump %s", i));
-                    Log.d(TAG,"Added to list :" + i );
+                for(Pump pump: pumps){
+                    if (Objects.equals(pump.getType(), "petrol")){
+                        pumpList.add(String.format("%s", pump.getName()));
+                        Timber.tag(TAG).d(pump.getName(), "Added to list :%s");
+                    }
                 }
                 break;
             case "Diesel":
-                for(int i = 1; i <= Integer.parseInt(activeStation.getNoDieselPumps()); i++){
-                    pumpList.add(String.format("Pump %s", i));
+                for(Pump pump: pumps){
+                    if (Objects.equals(pump.getType(), "diesel")){
+                        pumpList.add(String.format("%s", pump.getName()));
+                        Timber.tag(TAG).d(pump.getName(), "Added to list :%s");
+                    }
                 }
                 break;
             case "Kerosene":
-                for(int i = 1; i <= Integer.parseInt(activeStation.getNoKerosenePumps()); i++){
-                    pumpList.add(String.format("Pump %s", i));
+                for(Pump pump: pumps){
+                    if (Objects.equals(pump.getType(), "kerosene")){
+                        pumpList.add(String.format("%s", pump.getName()));
+                        Timber.tag(TAG).d(pump.getName(), "Added to list :%s");
+                    }
                 }
                 break;
         }
 
-        Log.d(TAG, "Pump list size: " + pumpList.size());
+        Timber.tag(TAG).d("Pump list size: %s", pumpList.size());
+
         ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(getContext(),R.layout.list_item, pumpList);
         binding.tvPumpList.setAdapter(stringArrayAdapter);
         binding.tvPumpList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_pump = pumpList.get(i);
-                Log.d(TAG, "Selected Pump: " + selected_pump);
+                Timber.tag(TAG).d("Selected Pump: %s", selected_pump);
                 activeProduct.setPump_no(selected_pump);
             }
         });

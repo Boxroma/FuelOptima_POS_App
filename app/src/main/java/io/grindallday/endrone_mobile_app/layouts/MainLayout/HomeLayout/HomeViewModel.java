@@ -8,17 +8,15 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.Timestamp;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import io.grindallday.endrone_mobile_app.model.Client;
 import io.grindallday.endrone_mobile_app.model.Product;
+import io.grindallday.endrone_mobile_app.model.Pump;
 import io.grindallday.endrone_mobile_app.model.Sale;
 import io.grindallday.endrone_mobile_app.model.Shift;
+import io.grindallday.endrone_mobile_app.model.ShiftStaff;
 import io.grindallday.endrone_mobile_app.model.Station;
 import io.grindallday.endrone_mobile_app.model.User;
 import io.grindallday.endrone_mobile_app.repository.FireStoreRepository;
@@ -39,6 +37,14 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     // Methods to expose live data from Firestore Repository
+    public MutableLiveData<Shift> getShiftMutableLiveData(){
+        return fireStoreRepository.getShiftInfo();
+    }
+
+    public MutableLiveData<ShiftStaff> getShiftStaffMutableLiveData(){
+        return fireStoreRepository.getShiftStaff();
+    }
+
     public MutableLiveData<Station> getStation() {
         return fireStoreRepository.getStationInfo();
     }
@@ -49,6 +55,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Product>> getProductList(){
         return fireStoreRepository.getProductLiveData();
+    }
+
+    public LiveData<List<Pump>> getPumps(){
+        return fireStoreRepository.getPumpLiveData();
     }
 
     public LiveData<List<Sale>> getSaleList(){

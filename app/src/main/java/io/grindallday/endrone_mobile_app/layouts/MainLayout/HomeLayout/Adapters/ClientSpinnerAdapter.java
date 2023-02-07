@@ -12,13 +12,11 @@ import androidx.annotation.Nullable;
 import io.grindallday.endrone_mobile_app.model.Client;
 
 public class ClientSpinnerAdapter extends ArrayAdapter<Client> {
-    private Context context;
-    private Client[] clients;
+    private final Client[] clients;
 
     public ClientSpinnerAdapter(@NonNull Context context, int resource, Client[] clients) {
         super(context, resource);
         this.clients = clients;
-        this.context = context;
     }
 
     @Override
