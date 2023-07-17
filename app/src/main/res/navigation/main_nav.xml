@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeLayout.HomeFragment"
+        android:name="io.grindallday_production.endrone_mobile_app.layouts.MainLayout.HomeLayout.HomeFragment"
         android:label=""
         tools:layout="@layout/fragment_home" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/transactionsFragment"
-        android:name="io.grindallday.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.TransactionsFragment"
+        android:name="io.grindallday_production.endrone_mobile_app.layouts.MainLayout.TransactionsLayout.TransactionsFragment"
         android:label="Sale History"
         tools:layout="@layout/fragment_transactions" >
         <action

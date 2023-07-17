@@ -1,41 +1,70 @@
 {
   "project_info": {
-    "project_number": "699540283820",
-    "project_id": "endrone-96260",
-    "storage_bucket": "endrone-96260.appspot.com"
+    "project_number": "563303862021",
+    "project_id": "endrone-production",
+    "storage_bucket": "endrone-production.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:699540283820:android:294c3b38ecaff60e5e9a09",
+        "mobilesdk_app_id": "1:563303862021:android:1db5772606881eb633716c",
         "android_client_info": {
           "package_name": "io.grindallday.endrone_mobile_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "699540283820-1tm6aicu8bns6t4b9v0m3i876s302t5f.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.grindallday.endrone_mobile_app",
-            "certificate_hash": "65a030e8e58948453f872461b2ee1dd48551e296"
-          }
-        },
-        {
-          "client_id": "699540283820-n9o53gq138nkackat8og3oglulcssau8.apps.googleusercontent.com",
+          "client_id": "563303862021-7kbjmgsqa1o28rp0ef4clau8641n2uc0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDfr3SqtofmaPcpfW_JDA0CCMZzrHJOxIs"
+          "current_key": "AIzaSyCAbsMpuAdmhwqVdKmDAji9O2Kl_d6tzrQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "699540283820-n9o53gq138nkackat8og3oglulcssau8.apps.googleusercontent.com",
+              "client_id": "563303862021-7kbjmgsqa1o28rp0ef4clau8641n2uc0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563303862021:android:26f1b10b46ba1ac633716c",
+        "android_client_info": {
+          "package_name": "io.grindallday_production.endrone_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563303862021-uu3p6od0s4k3agdp414iudtah2hpn870.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.grindallday_production.endrone_mobile_app",
+            "certificate_hash": "65a030e8e58948453f872461b2ee1dd48551e296"
+          }
+        },
+        {
+          "client_id": "563303862021-7kbjmgsqa1o28rp0ef4clau8641n2uc0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAbsMpuAdmhwqVdKmDAji9O2Kl_d6tzrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563303862021-7kbjmgsqa1o28rp0ef4clau8641n2uc0.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

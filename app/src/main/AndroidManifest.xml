@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.grindallday.endrone_mobile_app">
+    package="io.grindallday_production.endrone_mobile_app">
 
     <application
         android:allowBackup="true"
@@ -12,22 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Endrone_Mobile_App"
-        android:name="io.grindallday.endrone_mobile_app.ApplicationController"
+        android:name="io.grindallday_production.endrone_mobile_app.ApplicationController"
         tools:targetApi="31">
         <activity
-            android:name="io.grindallday.endrone_mobile_app.layouts.EndShiftLayout.EndShiftActivity"
+            android:name="io.grindallday_production.endrone_mobile_app.layouts.EndShiftLayout.EndShiftActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name="io.grindallday.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActivity"
+            android:name="io.grindallday_production.endrone_mobile_app.layouts.StartShiftLayout.StartShiftActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name="io.grindallday.endrone_mobile_app.layouts.MainLayout.HomeActivity"
+            android:name="io.grindallday_production.endrone_mobile_app.layouts.MainLayout.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Endrone_Mobile_App.Fullscreen"
